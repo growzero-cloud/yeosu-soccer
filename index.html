@@ -34,9 +34,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .fighting{font-family:'Arial Black','Arial',sans-serif;font-style:italic;font-weight:900;color:var(--ink);line-height:.92;letter-spacing:-.01em;transform:skewX(-7deg)}
 .fighting .l1{font-size:2.5rem;display:block}
 .fighting .l2{font-size:3.7rem;display:block;-webkit-text-stroke:1px var(--ink)}
-.start-desc{margin-top:16px;font-size:.95rem;font-weight:700;color:#444;line-height:1.5}
+.start-desc{margin-top:16px;font-size:.98rem;font-weight:800;color:#444;line-height:1.5}
 .start-desc .hl{color:var(--orange-d)}
 .start-date{margin-top:4px;font-size:.92rem;font-weight:800;color:#2b6b3a}
+.start-humor{margin-top:10px;font-size:.8rem;font-weight:700;color:#587f63;opacity:.9}
 
 .start-illust{position:absolute;left:0;right:0;bottom:0;height:56%;z-index:1}
 .si-ball{position:absolute;left:8%;top:30%;width:88px;height:88px;animation:floaty 3s ease-in-out infinite}
@@ -65,7 +66,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .hud-pill .pico{width:26px;height:26px}
 .hud-pill .ptxt{font-size:.95rem;font-weight:900;color:var(--ink)}
 .hud-score{font-size:1rem;font-weight:800;color:var(--ink)}
-.hud-score b{font-size:1.3rem;margin-left:6px;color:var(--orange-d)}
 
 /* Stage */
 .stage{position:relative;flex:1 1 auto;width:100%;overflow:hidden}
@@ -109,11 +109,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .pkspot{position:absolute;left:50%;top:26%;width:14px;height:7px;background:#eafae4;border-radius:50%;transform:translateX(-50%);opacity:.8}
 .tuft{position:absolute;color:var(--grass2);font-weight:900;font-size:13px;opacity:.55;pointer-events:none;line-height:1}
 
-/* Ball */
+/* Ball (watermelon) */
 .ball{position:absolute;left:50%;top:70%;width:74px;height:74px;transform:translate(-50%,-50%);z-index:8;pointer-events:none}
 .ball svg{width:100%;height:100%;display:block;overflow:visible}
-.ball.glow{filter:drop-shadow(0 0 10px rgba(255,255,120,.9)) drop-shadow(0 0 18px rgba(120,220,90,.6))}
-.ball.glow{animation:ballpulse 1.1s ease-in-out infinite}
+.ball.glow{filter:drop-shadow(0 0 10px rgba(255,255,120,.9)) drop-shadow(0 0 18px rgba(120,220,90,.6));animation:ballpulse 1.1s ease-in-out infinite}
 @keyframes ballpulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.06)}}
 
 /* Aim zones */
@@ -122,7 +121,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .az{border-radius:8px;transition:background .1s,box-shadow .1s;margin:2px}
 .az.on{background:rgba(255,205,60,.45);box-shadow:inset 0 0 14px rgba(255,180,30,.7)}
 
-.inst{position:absolute;left:0;right:0;bottom:5%;text-align:center;font-size:1.05rem;font-weight:800;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,.35);z-index:9;pointer-events:none}
+/* Trajectory dots (slingshot aim preview) */
+.tdot{position:fixed;border-radius:50%;background:rgba(255,255,255,.95);border:2px solid rgba(43,43,43,.18);z-index:24;pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.14)}
+
+.inst{position:absolute;left:0;right:0;bottom:5%;text-align:center;font-size:1.02rem;font-weight:800;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,.35);z-index:9;pointer-events:none;animation:instFloat 1.7s ease-in-out infinite}
+@keyframes instFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 .swipe{position:absolute;inset:0;z-index:25;touch-action:none}
 
 /* Speed dashes (kick) */
@@ -151,17 +154,23 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .card{
   position:fixed;left:0;right:0;bottom:0;z-index:60;
   background:#fff;border-radius:28px 28px 0 0;
-  padding:26px 24px calc(28px + env(safe-area-inset-bottom));
+  padding:24px 22px calc(24px + env(safe-area-inset-bottom));
   box-shadow:0 -8px 30px rgba(0,0,0,.18);
   transform:translateY(110%);transition:transform .42s cubic-bezier(.2,1,.3,1);
   text-align:center;
 }
 .card.up{transform:translateY(0)}
-.card .cemoji{font-size:3rem;margin-bottom:6px}
-.card .ctitle{font-size:1.7rem;font-weight:900;color:var(--ink);margin-bottom:10px}
+.card .ctitle{font-size:1.6rem;font-weight:900;color:var(--ink);margin-bottom:12px}
 .card .ctitle .hl{color:var(--orange-d)}
-.card .cmsg{font-size:1rem;font-weight:700;color:#555;line-height:1.55;margin-bottom:20px}
-.card .cbrand{font-size:.82rem;font-weight:800;color:#2b6b3a;margin-bottom:18px;letter-spacing:.02em}
+.prize-box{background:#fff7ec;border:2px dashed #f0b46a;border-radius:18px;padding:14px 12px 13px;margin-bottom:12px}
+.prize-box .cemoji{font-size:3.2rem;line-height:1.1}
+.prize-name{font-size:1.3rem;font-weight:900;color:var(--ink);margin-top:6px}
+.prize-grade{display:inline-block;margin-top:7px;background:var(--orange);color:#fff;font-size:.72rem;font-weight:800;border-radius:100px;padding:3px 11px}
+.prize-meta{margin-top:8px;font-size:.73rem;color:#a3a3a3;font-weight:600}
+.card .cmsg{font-size:.95rem;font-weight:700;color:#555;line-height:1.5;margin-bottom:10px}
+.humor{font-size:.82rem;color:#8a8a8a;font-weight:700;margin-bottom:12px}
+.staff-note{background:#eafaef;border-radius:12px;padding:13px;font-size:.9rem;font-weight:800;color:#2b6b3a;margin-bottom:12px}
+.card .cbrand{font-size:.78rem;font-weight:800;color:#2b6b3a;margin-bottom:14px;letter-spacing:.02em}
 .card .btn-dark{position:static;box-shadow:0 6px 16px rgba(0,0,0,.18);width:100%}
 
 /* dim behind card */
@@ -190,8 +199,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
     <span class="kbadge">🇰🇷 대한민국 승리 기원</span>
     <div class="start-sup">여수식자재마트 어항단지점</div>
     <div class="fighting"><span class="l1">FIGHTING</span><span class="l2">KOREA</span></div>
-    <div class="start-desc">골 넣고 <span class="hl">대한민국</span> 응원하GO! ⚽</div>
-    <div class="start-date">손님과 함께하는 응원 이벤트</div>
+    <div class="start-desc">수박 차GO! <span class="hl">경품</span> 받GO! 🍉</div>
+    <div class="start-date">꽝 없는 응원 이벤트 🎁</div>
+    <div class="start-humor">참가비 무료! 대신 인간적으로 뭐 하나는 사주실 거죠? 🥹🛒</div>
   </div>
   <div class="start-illust" id="startIllust"></div>
   <button id="btn-start" class="btn-dark">시작하기</button>
@@ -243,7 +253,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
     <div id="goalText">GOAL!</div>
     <div class="emote" id="emote">💦</div>
 
-    <div class="inst" id="inst">공을 밀어서 슛! 👆</div>
+    <div class="inst" id="inst">수박을 아래로 쭉~ 당겼다 놓으면 슛! 🍉</div>
     <div class="swipe" id="swipe"></div>
   </div>
 </div>
@@ -251,9 +261,16 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 <!-- ════ RESULT ════ -->
 <div id="dim"></div>
 <div class="card" id="card">
-  <div class="cemoji" id="cardEmoji">🎉</div>
-  <div class="ctitle" id="cardTitle">골인!</div>
+  <div class="ctitle" id="cardTitle">GOAL!</div>
+  <div class="prize-box" id="prizeBox" style="display:none">
+    <div class="cemoji" id="cardEmoji">🎁</div>
+    <div class="prize-name" id="prizeName"></div>
+    <span class="prize-grade" id="prizeGrade"></span>
+    <div class="prize-meta" id="prizeMeta"></div>
+  </div>
   <div class="cmsg" id="cardMsg"></div>
+  <div class="humor" id="cardHumor"></div>
+  <div class="staff-note" id="staffNote" style="display:none">📢 계산대에서 직원에게 이 화면을 보여주세요</div>
   <div class="cbrand">여수식자재마트 어항단지점 응원 이벤트</div>
   <button id="btn-retry" class="btn-dark">한번 더 도전! ⚽</button>
 </div>
@@ -264,8 +281,23 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 <script>
 'use strict';
 
-/* ───────── Reusable art (SVG strings) ───────── */
-const BALL_SVG=`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#2b2b2b" stroke-width="5"/><polygon points="50,34 65,45 59,63 41,63 35,45" fill="#2b2b2b"/><path d="M50 34 L50 13 M65 45 L85 39 M59 63 L72 84 M41 63 L28 84 M35 45 L15 39" stroke="#2b2b2b" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M50 13 a37 37 0 0 1 18 5 M85 39 a37 37 0 0 1 -4 22 M72 84 a37 37 0 0 1 -22 3 M28 84 a37 37 0 0 1 -13 -23 M15 39 a37 37 0 0 1 17 -21" stroke="#2b2b2b" stroke-width="0" fill="none"/><polygon points="50,13 58,17 56,8" fill="#2b2b2b"/><polygon points="84,39 81,49 90,46" fill="#2b2b2b"/><polygon points="72,84 62,82 67,90" fill="#2b2b2b"/><polygon points="28,84 33,90 38,82" fill="#2b2b2b"/><polygon points="15,39 10,47 19,49" fill="#2b2b2b"/><ellipse cx="38" cy="35" rx="11" ry="7" fill="#fff" opacity=".75"/></svg>`;
+/* ───────── Watermelon ball art ───────── */
+let __wm=0;
+function wmSVG(){
+  __wm++;const id='wmc'+__wm;
+  return `<svg viewBox="0 0 100 100"><defs><clipPath id="${id}"><circle cx="50" cy="50" r="40"/></clipPath></defs>
+  <circle cx="50" cy="50" r="43" fill="#4cbf55" stroke="#2b2b2b" stroke-width="5"/>
+  <g clip-path="url(#${id})" stroke="#2f9038" fill="none" stroke-linecap="round">
+    <path d="M50 6 q10 22 0 44 q-10 22 0 44" stroke-width="10"/>
+    <path d="M24 8 q9 21 0 42 q-9 21 0 42" stroke-width="9"/>
+    <path d="M76 8 q-9 21 0 42 q9 21 0 42" stroke-width="9"/>
+    <path d="M8 22 q7 14 1 28 q-6 14 1 28" stroke-width="7"/>
+    <path d="M92 22 q-7 14 -1 28 q6 14 -1 28" stroke-width="7"/>
+  </g>
+  <path d="M50 8 q-1 -7 6 -9" stroke="#5b3d20" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="35" cy="30" rx="12" ry="7" fill="#fff" opacity=".5" transform="rotate(-28 35 30)"/>
+  </svg>`;
+}
 
 function keeperSVG(){return `<svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
   <!-- feet -->
@@ -277,7 +309,6 @@ function keeperSVG(){return `<svg viewBox="0 0 220 240" xmlns="http://www.w3.org
   <!-- arms (orange sleeves) -->
   <path d="M80 142 Q50 120 44 84" fill="none" stroke="#fb8c2a" stroke-width="30" stroke-linecap="round"/>
   <path d="M140 142 Q170 120 176 84" fill="none" stroke="#fb8c2a" stroke-width="30" stroke-linecap="round"/>
-  <path d="M80 142 Q50 120 44 84" fill="none" stroke="#2b2b2b" stroke-width="36" stroke-linecap="round" opacity="0"/>
   <!-- torso -->
   <path d="M58 196 Q52 130 70 118 Q110 104 150 118 Q168 130 162 196 Q110 210 58 196 Z" fill="#fb8c2a" stroke="#2b2b2b" stroke-width="5"/>
   <path d="M70 118 Q110 104 150 118 Q156 132 150 140 Q110 126 70 140 Q64 132 70 118 Z" fill="#ffa94d"/>
@@ -338,12 +369,7 @@ const sky=document.getElementById('sky');
 [[8,5,60],[70,8,80],[40,3,50]].forEach(([x,y,w])=>{
   const c=document.createElement('div');c.className='cloud';
   c.style.cssText=`left:${x}%;top:${y}%;width:${w}px;height:${w*0.34}px`;
-  c.innerHTML='';
-  const b1=document.createElement('span');
   sky.appendChild(c);
-});
-document.querySelectorAll('.cloud').forEach(c=>{
-  c.style.setProperty('--w',c.style.width);
 });
 // sparkles
 [[30,16],[78,30],[20,40],[88,18],[55,12],[12,28]].forEach(([x,y])=>{
@@ -366,24 +392,53 @@ for(let y=ny0;y<=ny1;y+=18){const l=document.createElementNS('http://www.w3.org/
 const aimInner=document.getElementById('aimInner');
 for(let i=0;i<9;i++){const d=document.createElement('div');d.className='az';d.dataset.z=i;aimInner.appendChild(d);}
 // hud ball + ball + keeper
-document.getElementById('hudball').innerHTML=BALL_SVG;
-document.getElementById('ball').innerHTML=BALL_SVG;
+document.getElementById('hudball').innerHTML=wmSVG();
+document.getElementById('ball').innerHTML=wmSVG();
 document.getElementById('keeper').innerHTML=keeperSVG();
 // start illustration
 (function(){
   const root=document.getElementById('startIllust');
-  // dashes
   [[20,20,40,8,20],[60,30,30,7,-30],[80,55,46,8,15],[35,60,34,7,-20],[70,12,28,6,40],[15,45,30,7,10]].forEach(([x,y,w,h,r])=>{
     const d=document.createElement('div');d.className='dash';
     d.style.cssText=`left:${x}%;top:${y}%;width:${w}px;height:${h}px;transform:rotate(${r}deg)`;root.appendChild(d);
   });
-  const b=document.createElement('div');b.className='si-ball';b.innerHTML=BALL_SVG;root.appendChild(b);
+  const b=document.createElement('div');b.className='si-ball';b.innerHTML=wmSVG();root.appendChild(b);
   const k=document.createElement('div');k.className='si-keeper';k.innerHTML=keeperSVG();root.appendChild(k);
 })();
+
+/* ───────── Prize pool (예시 구성) ─────────
+   TODO: 실제 1500개 상품 리스트 확정 시 맥미니 서버(공유 재고) 연동 예정.
+   지금은 가중치 기반 로컬 랜덤 추첨. */
+const PRIZES=[
+  {e:'🍉',n:'수박 한 통',      g:'특급 경품',w:2},
+  {e:'🥩',n:'한우 사골세트',    g:'특급 경품',w:1},
+  {e:'🥔',n:'감자 한 박스',     g:'특급 경품',w:1},
+  {e:'🥓',n:'삼겹살 한 팩',     g:'우수 경품',w:6},
+  {e:'🦑',n:'오징어 한 마리',   g:'우수 경품',w:8},
+  {e:'🍚',n:'햇반 세트',        g:'우수 경품',w:6},
+  {e:'🍅',n:'방울토마토 500g', g:'경품',w:18},
+  {e:'🥒',n:'애호박 1개',       g:'경품',w:18},
+  {e:'🍄',n:'팽이버섯 1봉',     g:'경품',w:18},
+  {e:'🌶️',n:'고추 150g',       g:'경품',w:12},
+  {e:'🧄',n:'깐마늘 한 팩',     g:'경품',w:10},
+];
+function drawPrize(){const tot=PRIZES.reduce((s,p)=>s+p.w,0);let r=Math.random()*tot;for(const p of PRIZES){r-=p.w;if(r<0)return p;}return PRIZES[PRIZES.length-1];}
+
+/* ───────── 1회 참여 제한 (폰 브라우저 기록) ─────────
+   일반 접속: 1회 플레이 후 재접속 시 당첨확인(수령권) 화면.
+   테스트: URL 뒤에 ?test=1 → 기록 삭제 + 무제한 플레이. */
+const PKEY='yeosu_wm_play_v1';
+const PLAY_TEST=/[?&]test/.test(location.search);
+if(PLAY_TEST){try{localStorage.removeItem(PKEY);}catch(e){}}
+let LOCKED=false;
+function getRec(){try{return JSON.parse(localStorage.getItem(PKEY)||'null');}catch(e){return null;}}
+function fmtT(ts){const d=new Date(ts);const p=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`;}
+function mkCode(){return Math.random().toString(36).slice(2,6).toUpperCase();}
 
 /* ───────── Game logic ───────── */
 const BALL_TGT=[[16,18],[50,16],[84,18],[16,50],[50,50],[84,50],[16,82],[50,82],[84,82]];
 const DIVE=[[16,52,-48],[50,58,0],[84,52,48],[8,24,-32],[50,8,0],[92,24,32],[14,2,-58],[50,2,0],[86,2,58]];
+const INST_TXT='수박을 아래로 쭉~ 당겼다 놓으면 슛! 🍉';
 
 const sStart=document.getElementById('s-start');
 const sGame=document.getElementById('s-game');
@@ -402,48 +457,122 @@ const flashEl=document.getElementById('flash');
 const confEl=document.getElementById('confetti');
 const azCells=document.querySelectorAll('.az');
 
-let shooting=false,dragging=false,mdown=false,sx=0,sy=0,curZ=-1,actx=null;
+let shooting=false,actx=null,curDiveZone=4;
 
 function show(el){[sStart,sGame].forEach(e=>e.style.display='none');el.style.display='flex';}
-show(sStart);
 document.getElementById('btn-start').addEventListener('click',()=>{initAudio();show(sGame);});
 document.getElementById('btn-retry').addEventListener('click',reset);
 
-function setZone(z){if(z===curZ)return;azCells.forEach(c=>c.classList.remove('on'));if(z>=0&&z<=8)aimInner.querySelector(`[data-z="${z}"]`).classList.add('on');curZ=z;}
-function clearZone(){setZone(-1);}
-function calcZone(dx,dy){const W=innerWidth,H=innerHeight;return (dy>H*.12?0:dy>H*.045?1:2)*3+(dx<-W*.10?0:dx>W*.10?2:1);}
+/* boot: 이미 참여한 폰이면 바로 당첨확인(수령권) 화면 */
+const rec0=getRec();
+if(rec0&&!PLAY_TEST){
+  LOCKED=true;show(sGame);
+  setTimeout(()=>{fillCard(rec0,true);dim.classList.add('on');card.classList.add('up');},250);
+}else{
+  show(sStart);
+}
 
-swipe.addEventListener('touchstart',e=>{if(shooting)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;dragging=true;e.preventDefault();},{passive:false});
-swipe.addEventListener('touchmove',e=>{if(!dragging||shooting)return;const t=e.touches[0],dx=t.clientX-sx,dy=sy-t.clientY;if(Math.hypot(dx,dy)>16)setZone(calcZone(dx,dy));e.preventDefault();},{passive:false});
-swipe.addEventListener('touchend',e=>{if(!dragging||shooting)return;dragging=false;const t=e.changedTouches[0],dx=t.clientX-sx,dy=sy-t.clientY;if(Math.hypot(dx,dy)>28)shoot(calcZone(dx,dy));else clearZone();e.preventDefault();},{passive:false});
-swipe.addEventListener('mousedown',e=>{if(shooting)return;mdown=true;sx=e.clientX;sy=e.clientY;e.preventDefault();});
-window.addEventListener('mousemove',e=>{if(!mdown||shooting)return;const dx=e.clientX-sx,dy=sy-e.clientY;if(Math.hypot(dx,dy)>16)setZone(calcZone(dx,dy));});
-window.addEventListener('mouseup',e=>{if(!mdown)return;mdown=false;const dx=e.clientX-sx,dy=sy-e.clientY;if(Math.hypot(dx,dy)>28)shoot(calcZone(dx,dy));else clearZone();});
+function setZone(z){if(z===curZ)return;azCells.forEach(c=>c.classList.remove('on'));if(z>=0&&z<=8)aimInner.querySelector(`[data-z="${z}"]`).classList.add('on');curZ=z;}
+let curZ=-1;
+function clearZone(){setZone(-1);}
+
+/* ── Slingshot input: pull back → trajectory preview → release to shoot ── */
+let dragOn=false,pSX=0,pSY=0,baseX=0,baseY=0;
+const DOT_N=7,dots=[];
+(function(){for(let i=0;i<DOT_N;i++){const d=document.createElement('div');d.className='tdot';d.style.display='none';document.body.appendChild(d);dots.push(d);}})();
+function hideDots(){dots.forEach(d=>d.style.display='none');}
+
+function calcZoneFromPull(px,py){ // pull vector: down=+y. aim = inverted (slingshot)
+  const W=innerWidth,H=innerHeight;
+  const row=py>H*.13?0:py>H*.05?1:2;       // 더 길게 당길수록 높은 코스
+  const col=px<-W*.09?2:px>W*.09?0:1;      // 왼쪽으로 당기면 오른쪽 코스
+  return row*3+col;
+}
+
+function updateAim(px,py){
+  const dist=Math.hypot(px,py);
+  const ox=Math.max(-46,Math.min(46,px*.38)), oy=Math.max(-14,Math.min(60,py*.38));
+  ball.style.transition='none';
+  ball.style.transform=`translate(-50%,-50%) translate(${ox}px,${oy}px) scale(${1+Math.min(dist/900,.08)})`;
+  if(dist<=36){hideDots();clearZone();return;}
+  const z=calcZoneFromPull(px,py);
+  setZone(z);
+  const[tx,ty]=zonePoint(z);
+  const mx=(baseX+tx)/2, my=(baseY+ty)/2-Math.min(110,Math.hypot(tx-baseX,ty-baseY)*.22);
+  for(let i=0;i<DOT_N;i++){
+    const t=.14+.74*i/(DOT_N-1);
+    const x=(1-t)*(1-t)*baseX+2*(1-t)*t*mx+t*t*tx;
+    const y=(1-t)*(1-t)*baseY+2*(1-t)*t*my+t*t*ty;
+    const s=13-7*i/(DOT_N-1);
+    const d=dots[i];d.style.display='block';
+    d.style.left=x+'px';d.style.top=y+'px';d.style.width=s+'px';d.style.height=s+'px';
+    d.style.opacity=String(.95-.45*i/(DOT_N-1));
+  }
+}
+
+function dragStart(x,y){
+  if(shooting||LOCKED)return;
+  dragOn=true;pSX=x;pSY=y;
+  const r=ball.getBoundingClientRect();baseX=r.left+r.width/2;baseY=r.top+r.height/2;
+  ball.classList.remove('glow');
+}
+function dragMove(x,y){if(!dragOn||shooting)return;updateAim(x-pSX,y-pSY);}
+function dragEnd(x,y){
+  if(!dragOn||shooting)return;dragOn=false;
+  const px=x-pSX,py=y-pSY;hideDots();
+  if(Math.hypot(px,py)>36){snapShoot(calcZoneFromPull(px,py));}
+  else cancelPull();
+}
+function cancelPull(){
+  clearZone();
+  ball.style.transition='transform .25s cubic-bezier(.34,1.5,.5,1)';
+  ball.style.transform='translate(-50%,-50%)';
+  setTimeout(()=>ball.classList.add('glow'),260);
+}
+function snapShoot(zone){
+  ball.style.transition='transform .1s cubic-bezier(.3,.7,.4,1)';
+  ball.style.transform='translate(-50%,-50%) translateY(-10px) scale(1.03)';
+  setTimeout(()=>shoot(zone),70);
+}
+
+swipe.addEventListener('touchstart',e=>{const t=e.touches[0];dragStart(t.clientX,t.clientY);e.preventDefault();},{passive:false});
+swipe.addEventListener('touchmove',e=>{const t=e.touches[0];dragMove(t.clientX,t.clientY);e.preventDefault();},{passive:false});
+swipe.addEventListener('touchend',e=>{const t=e.changedTouches[0];dragEnd(t.clientX,t.clientY);e.preventDefault();},{passive:false});
+swipe.addEventListener('mousedown',e=>{dragStart(e.clientX,e.clientY);e.preventDefault();});
+window.addEventListener('mousemove',e=>{dragMove(e.clientX,e.clientY);});
+window.addEventListener('mouseup',e=>{dragEnd(e.clientX,e.clientY);});
 
 /* Audio */
 function initAudio(){if(!actx){try{actx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}}
 function beep(f,d,t,v){try{initAudio();const o=actx.createOscillator(),g=actx.createGain();o.connect(g);g.connect(actx.destination);o.type=t||'sine';o.frequency.setValueAtTime(f,actx.currentTime);o.frequency.exponentialRampToValueAtTime(f*.3,actx.currentTime+d);g.gain.setValueAtTime(v||.6,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d);}catch(e){}}
 function sndKick(){beep(170,.12,'sine',.7);}
 function sndGoal(){[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>beep(f,.18,'triangle',.4),i*75));}
-function sndSave(){beep(200,.28,'square',.32);}
+function sndCheer(){try{
+  initAudio();const dur=1.5;
+  const buf=actx.createBuffer(1,actx.sampleRate*dur,actx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++){d[i]=(Math.random()*2-1)*Math.pow(Math.sin(Math.PI*i/d.length),2);}
+  const src=actx.createBufferSource();src.buffer=buf;
+  const f=actx.createBiquadFilter();f.type='bandpass';f.frequency.value=1100;f.Q.value=.8;
+  const g=actx.createGain();
+  g.gain.setValueAtTime(.0001,actx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.45,actx.currentTime+.22);
+  g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+  src.connect(f);f.connect(g);g.connect(actx.destination);src.start();
+}catch(e){}}
 
-/* Shoot */
+/* Shoot — 골 확률 100%, 키퍼는 항상 다른 코스로 다이빙 */
 function shoot(zone){
-  if(shooting)return;shooting=true;clearZone();sndKick();
-  ball.classList.remove('glow');
-  inst.textContent='슈팅!!!';
-  const isGoal=Math.random()<.5;
-  let kz;if(isGoal){do{kz=Math.floor(Math.random()*9);}while(kz===zone);}else kz=zone;
+  if(shooting)return;shooting=true;clearZone();hideDots();sndKick();
+  inst.textContent='슈팅!!! 🍉';
+  let kz;do{kz=Math.floor(Math.random()*9);}while(kz===zone);
   speedDashes();
-  ball.style.transition='transform .08s ease';
-  ball.style.transform='translate(-50%,-50%) translateY(7px) scale(1.18)';
+  ball.style.transition='transform .07s ease';
+  ball.style.transform='translate(-50%,-50%) scale(.9)';
   setTimeout(()=>{
-    ball.style.transform='translate(-50%,-50%) translateY(-4px) scale(.92)';
-    setTimeout(()=>{
-      dive(kz,isGoal);
-      flyBall(zone,isGoal);
-      setTimeout(()=>result(isGoal,zone), isGoal?1200:1520);
-    },70);
+    dive(kz);
+    flyBall(zone);
+    setTimeout(()=>result(zone),1200);
   },70);
 }
 
@@ -456,12 +585,11 @@ function zonePoint(zone){
   return [ix+iw*tx/100, iy+ih*ty/100];
 }
 
-/* Ball flight */
-function flyBall(zone,isGoal){
+/* Ball flight (always a goal) */
+function flyBall(zone){
   const bR=ball.getBoundingClientRect();
   const sx2=bR.left+bR.width/2, sy2=bR.top+bR.height/2;
   const [tpx,tpy]=zonePoint(zone);
-  // trajectory beam
   const ang=Math.atan2(tpy-sy2,tpx-sx2)*180/Math.PI;
   const len=Math.hypot(tpx-sx2,tpy-sy2);
   beam.style.left=sx2+'px';beam.style.top=sy2+'px';beam.style.width=len+'px';
@@ -474,39 +602,23 @@ function flyBall(zone,isGoal){
   document.body.appendChild(sh);
   const g=document.createElement('div');
   g.style.cssText=`position:fixed;left:${sx2}px;top:${sy2}px;width:64px;height:64px;transform:translate(-50%,-50%);z-index:46;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))`;
-  g.innerHTML=BALL_SVG;document.body.appendChild(g);
+  g.innerHTML=wmSVG();document.body.appendChild(g);
   ball.style.opacity='0';
   const dx=tpx-sx2,dy=tpy-sy2,groundY=sy2;
 
-  if(isGoal){
-    const dur=560,arc=Math.min(70,Math.abs(dy)*.3+38),t0=performance.now();
-    (function step(t){
-      const p=Math.min((t-t0)/dur,1);
-      const px=1-Math.pow(1-p,1.9),py=1-Math.pow(1-p,1.7);
-      const h=arc*Math.sin(Math.PI*p);
-      const cx=sx2+dx*px,cy=sy2+dy*py-h;
-      g.style.left=cx+'px';g.style.top=cy+'px';
-      g.style.transform=`translate(-50%,-50%) scale(${1-.42*p}) rotate(${p*640}deg)`;
-      sh.style.left=cx+'px';sh.style.top=(groundY+dy*py)+'px';
-      const ss=(1-.5*p)*(1-Math.min(h/160,.7));sh.style.transform=`translate(-50%,-50%) scale(${Math.max(ss,.1)})`;sh.style.opacity=String(.22*(1-p*.5));
-      if(p<1)requestAnimationFrame(step);
-      else{sh.remove();stickBallInNet(g,zone);goalImpact(zone);}
-    })(performance.now());
-  }else{
-    const cDur=430,arc1=Math.min(54,Math.abs(dy)*.24+30),t0=performance.now();
-    (function step(t){
-      const p=Math.min((t-t0)/cDur,1);
-      const px=1-Math.pow(1-p,1.8),py=1-Math.pow(1-p,1.6);
-      const h=arc1*Math.sin(Math.PI*p);
-      const cx=sx2+dx*px,cy=sy2+dy*py-h;
-      g.style.left=cx+'px';g.style.top=cy+'px';
-      g.style.transform=`translate(-50%,-50%) scale(${1-.34*p}) rotate(${p*420}deg)`;
-      sh.style.left=cx+'px';sh.style.top=(groundY+dy*py)+'px';
-      const ss=(1-.45*p)*(1-Math.min(h/160,.7));sh.style.transform=`translate(-50%,-50%) scale(${Math.max(ss,.1)})`;sh.style.opacity=String(.22*(1-p*.45));
-      if(p<1)requestAnimationFrame(step);
-      else{saveImpact(zone);bounceBall(g,sh,tpx,tpy,zone);}
-    })(performance.now());
-  }
+  const dur=560,arc=Math.min(70,Math.abs(dy)*.3+38),t0=performance.now();
+  (function step(t){
+    const p=Math.min((t-t0)/dur,1);
+    const px=1-Math.pow(1-p,1.9),py=1-Math.pow(1-p,1.7);
+    const h=arc*Math.sin(Math.PI*p);
+    const cx=sx2+dx*px,cy=sy2+dy*py-h;
+    g.style.left=cx+'px';g.style.top=cy+'px';
+    g.style.transform=`translate(-50%,-50%) scale(${1-.42*p}) rotate(${p*640}deg)`;
+    sh.style.left=cx+'px';sh.style.top=(groundY+dy*py)+'px';
+    const ss=(1-.5*p)*(1-Math.min(h/160,.7));sh.style.transform=`translate(-50%,-50%) scale(${Math.max(ss,.1)})`;sh.style.opacity=String(.22*(1-p*.5));
+    if(p<1)requestAnimationFrame(step);
+    else{sh.remove();stickBallInNet(g,zone);goalImpact(zone);}
+  })(performance.now());
 }
 
 /* ball sticks in the net on goal */
@@ -514,62 +626,30 @@ function stickBallInNet(g,zone){
   g.style.transition='transform .12s ease-out';
   g.style.transform='translate(-50%,-50%) scale(.58)';
   window.__netBall=g;
-  // small jiggle
   setTimeout(()=>{g.style.transform='translate(-50%,-52%) scale(.58)';},120);
   setTimeout(()=>{g.style.transform='translate(-50%,-50%) scale(.58)';},260);
 }
 
-/* ricochet on save */
-function bounceBall(g,sh,cx,cy,zone){
-  const W=innerWidth,H=innerHeight,col=zone%3;
-  const dir=col===0?-1:col===2?1:(Math.random()<.5?-1:1);
-  const sideDist=W*.5+Math.random()*W*.25,upPeak=150+Math.random()*70,drop=H*.7;
-  const dur=640,t0=performance.now(),sS=.66,eS=1.25;
-  (function step(t){
-    const p=Math.min((t-t0)/dur,1);
-    const px=1-Math.pow(1-p,2);
-    const xOff=dir*sideDist*px,yOff=-upPeak*4*p*(1-p)+drop*p;
-    const x=cx+xOff,y=cy+yOff;
-    g.style.left=x+'px';g.style.top=y+'px';
-    g.style.transform=`translate(-50%,-50%) scale(${sS+(eS-sS)*p}) rotate(${-dir*p*760}deg)`;
-    g.style.opacity=p>.8?String(Math.max(1-(p-.8)/.2,0)):'1';
-    sh.style.left=x+'px';sh.style.opacity=String(.16*Math.max(1-p*1.6,0));
-    if(p<1)requestAnimationFrame(step);else{g.remove();sh.remove();}
-  })(performance.now());
-}
-
 /* Keeper dive */
-function dive(zone,isGoal){
+function dive(zone){
+  curDiveZone=zone;
   const[lp,bp,rot]=DIVE[zone];
   keeperEl.style.left=lp+'%';keeperEl.style.bottom=bp+'%';
   keeperEl.style.transform=`translateX(-50%) rotate(${rot}deg)`;
-  // shadow stays on ground, slides toward dive x
   keeperShadow.style.left=lp+'%';
   keeperShadow.style.opacity=bp>20?'.05':'.16';
-}
-
-function saveImpact(zone){
-  sndSave();
-  const[lp,bp,rot]=DIVE[zone];
-  keeperEl.style.transition='transform .12s ease-out,left .32s cubic-bezier(.34,1.3,.5,1),bottom .32s cubic-bezier(.34,1.3,.5,1)';
-  keeperEl.style.transform=`translateX(-50%) rotate(${rot}deg) scale(1.12)`;
-  setTimeout(()=>{keeperEl.style.transform=`translateX(-50%) rotate(${rot}deg) scale(1)`;},150);
-  stage.classList.add('shake');setTimeout(()=>stage.classList.remove('shake'),340);
-  burst(zone,['#fff','#e2e8f0','#cbd5e1','#94a3b8']);
-  showEmote(zone,'✋',false);
 }
 
 function goalImpact(zone){
   netImpactAt(zone);
   stage.classList.add('shake');setTimeout(()=>stage.classList.remove('shake'),350);
-  burst(zone,['#FFD700','#FF6B35','#FF4500','#FFF176','#FFAB40','#fff']);
-  flashGold();sndGoal();
+  burst(zone,['#FFD700','#ff5a5a','#4cbf55','#FFF176','#FFAB40','#fff']);
+  flashGold();sndGoal();sndCheer();
   goalText.classList.add('show');
-  showEmote(curDiveZone,'💦',true);
+  showEmote(curDiveZone,'💦');
 }
-let curDiveZone=4;
 
-function showEmote(zone,ch,nearKeeper){
+function showEmote(zone,ch){
   const r=keeperEl.getBoundingClientRect();
   emote.textContent=ch;
   emote.style.left=(r.left+r.width*0.5- stage.getBoundingClientRect().left)+'px';
@@ -617,24 +697,37 @@ function speedDashes(){
   }
 }
 
-/* Result card */
-function result(isGoal,zone){
-  if(isGoal){
-    confetti(80);setTimeout(()=>confetti(50),420);
-    document.getElementById('cardEmoji').textContent='🎉';
-    document.getElementById('cardTitle').innerHTML='골인! <span class="hl">대한민국 화이팅!</span>';
-    document.getElementById('cardMsg').innerHTML='완벽한 슈팅이에요! ⚽<br>오늘도 대한민국의 승리를 응원합니다!';
-  }else{
-    document.getElementById('cardEmoji').textContent='🧤';
-    document.getElementById('cardTitle').textContent='아쉽다!';
-    document.getElementById('cardMsg').innerHTML='골키퍼가 막아냈어요! 💪<br>다시 도전해서 골을 넣어보세요!';
+/* Result: 골인 → 경품 추첨 + 기록 저장 */
+function result(zone){
+  confetti(80);setTimeout(()=>confetti(50),420);
+  const p=drawPrize();
+  const rec={e:p.e,n:p.n,g:p.g,t:Date.now(),c:mkCode()};
+  if(!PLAY_TEST){
+    try{localStorage.setItem(PKEY,JSON.stringify(rec));}catch(e){}
+    LOCKED=true;
   }
+  fillCard(rec,false);
   dim.classList.add('on');card.classList.add('up');
 }
 
-/* set dive zone tracker */
-const _dive=dive;
-dive=function(zone,isGoal){curDiveZone=zone;_dive(zone,isGoal);};
+function fillCard(rec,isRevisit){
+  document.getElementById('cardTitle').innerHTML=isRevisit
+    ?'참여 완료! <span class="hl">당첨 확인</span> ✅'
+    :'GOAL! <span class="hl">당첨을 축하합니다!</span> 🎉';
+  document.getElementById('prizeBox').style.display='block';
+  document.getElementById('cardEmoji').textContent=rec.e;
+  document.getElementById('prizeName').textContent=rec.n;
+  document.getElementById('prizeGrade').textContent=rec.g;
+  document.getElementById('prizeMeta').textContent=`당첨번호 ${rec.c} · ${fmtT(rec.t)} · 상품 구성 예시`;
+  document.getElementById('cardMsg').innerHTML=isRevisit
+    ?'이미 참여하신 기록이에요.<br>아직 경품을 안 받으셨다면 지금 받아가세요!'
+    :'완벽한 슈팅! 오늘 대한민국도 골 폭죽 🇰🇷';
+  document.getElementById('cardHumor').textContent='참가비는 무료지만… 인간적으로 뭐 하나는 사주실 거죠? 🥹🛒';
+  const staff=document.getElementById('staffNote');
+  const btn=document.getElementById('btn-retry');
+  if(PLAY_TEST){staff.style.display='none';btn.style.display='block';btn.textContent='한번 더 테스트 🔁';}
+  else{staff.style.display='block';btn.style.display='none';}
+}
 
 /* Confetti */
 function confetti(n){
@@ -648,7 +741,7 @@ function confetti(n){
   setTimeout(()=>{confEl.innerHTML='';},4800);
 }
 
-/* Reset */
+/* Reset (테스트 모드 전용) */
 function reset(){
   card.classList.remove('up');dim.classList.remove('on');
   confEl.innerHTML='';
@@ -660,8 +753,8 @@ function reset(){
   requestAnimationFrame(()=>{keeperEl.style.transition='left .32s cubic-bezier(.34,1.3,.5,1),bottom .32s cubic-bezier(.34,1.3,.5,1),transform .32s cubic-bezier(.34,1.3,.5,1)';});
   ball.style.opacity='1';ball.style.transition='none';ball.style.transform='translate(-50%,-50%)';
   requestAnimationFrame(()=>ball.classList.add('glow'));
-  inst.textContent='공을 밀어서 슛! 👆';
-  clearZone();shooting=dragging=mdown=false;
+  inst.textContent=INST_TXT;
+  clearZone();hideDots();shooting=dragOn=false;
 }
 </script>
 </body>
