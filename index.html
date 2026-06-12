@@ -122,8 +122,13 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   transition:left .32s cubic-bezier(.34,1.3,.5,1),bottom .32s cubic-bezier(.34,1.3,.5,1),transform .32s cubic-bezier(.34,1.3,.5,1);
   filter:drop-shadow(0 5px 4px rgba(0,0,0,.14));
 }
-.keeper.idle{animation:kBreathe 2.7s ease-in-out infinite}
-@keyframes kBreathe{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+.keeper.idle{animation:kReady 1.55s ease-in-out infinite}
+@keyframes kReady{
+  0%,100%{transform:translate(-50%,0) rotate(0)}
+  20%{transform:translate(calc(-50% - 8px),-5px) rotate(-2.5deg)}
+  45%{transform:translate(-50%,0) rotate(0)}
+  70%{transform:translate(calc(-50% + 8px),-5px) rotate(2.5deg)}
+}
 .keeper svg{width:100%;display:block;overflow:visible}
 .keeper .kpupil{transition:transform .15s ease}
 .keeper-shadow{position:absolute;left:50%;bottom:-1%;width:34%;max-width:120px;height:15px;background:rgba(0,0,0,.16);border-radius:50%;transform:translateX(-50%);z-index:3;filter:blur(2px);transition:all .32s ease}
@@ -220,10 +225,20 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   text-align:center;
 }
 .card.up{transform:translateY(0)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:7px;border-radius:28px 28px 0 0;background:linear-gradient(90deg,#fb8c2a,#ffd700,#fb8c2a)}
 .card-store{display:inline-block;background:#fff3e4;color:var(--orange-d);border:1.5px solid #f5c894;font-size:.8rem;font-weight:900;border-radius:100px;padding:5px 15px;margin-bottom:10px}
 .card .ctitle{font-size:1.6rem;font-weight:900;color:var(--ink);margin-bottom:12px}
 .card .ctitle .hl{color:var(--orange-d)}
-.prize-box{background:#fff7ec;border:2px dashed #f0b46a;border-radius:18px;padding:14px 12px 13px;margin-bottom:12px}
+.prize-box{position:relative;overflow:hidden;background:#fff7ec;border:2px dashed #f0b46a;border-radius:18px;padding:14px 12px 13px;margin-bottom:12px}
+.pb-rays{position:absolute;left:50%;top:46%;width:340px;height:340px;transform:translate(-50%,-50%);background:repeating-conic-gradient(rgba(251,140,42,.11) 0 14deg,transparent 14deg 30deg);animation:raysSpin 14s linear infinite;border-radius:50%;pointer-events:none}
+.prize-box .cemoji,.prize-box .prize-name,.prize-box .prize-grade,.prize-box .prize-meta{position:relative;z-index:1}
+.prize-box .stamp{position:absolute;top:8px;right:8px;z-index:2;width:52px;height:52px;border-radius:50%;background:#e8443a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;transform:rotate(14deg);border:2.5px solid rgba(255,255,255,.85);box-shadow:0 3px 10px rgba(232,68,58,.45);letter-spacing:.04em}
+.card.up .ctitle{animation:fadeUp .4s .12s ease both}
+.card.up .prize-box{animation:fadeUp .4s .2s ease both}
+.card.up .cmsg{animation:fadeUp .4s .3s ease both}
+.card.up .humor{animation:fadeUp .4s .36s ease both}
+.card.up .cemoji{animation:popSpin .5s .3s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes popSpin{0%{opacity:0;transform:scale(.2) rotate(-15deg)}70%{opacity:1;transform:scale(1.12) rotate(4deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
 .prize-box .cemoji{font-size:3.2rem;line-height:1.1}
 .prize-name{font-size:1.3rem;font-weight:900;color:var(--ink);margin-top:6px}
 .prize-grade{display:inline-block;margin-top:7px;background:var(--orange);color:#fff;font-size:.72rem;font-weight:800;border-radius:100px;padding:3px 11px}
@@ -246,6 +261,13 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .spark{position:fixed;border-radius:50%;pointer-events:none;z-index:85;animation:sparkOut .8s ease-out forwards}
 @keyframes sparkOut{0%{transform:translate(-50%,-50%) scale(1.4);opacity:1}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0);opacity:0}}
 .seed{position:fixed;width:7px;height:11px;background:#2e1d10;border-radius:50%;pointer-events:none;z-index:85;animation:sparkOut .7s ease-out forwards}
+/* 수박 슬라이스 연출 */
+.slash{position:fixed;height:6px;border-radius:100px;pointer-events:none;z-index:86;background:linear-gradient(90deg,rgba(255,255,255,0),#fff 30%,#fff 70%,rgba(255,255,255,0));animation:slashIn .22s ease-out forwards}
+@keyframes slashIn{0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--ra)) scaleX(.1)}45%{opacity:1;transform:translate(-50%,-50%) rotate(var(--ra)) scaleX(1.06)}100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--ra)) scaleX(1.12)}}
+.piece{position:fixed;left:0;top:0;pointer-events:none;z-index:86;line-height:1;will-change:transform,opacity;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.chunk{position:fixed;left:0;top:0;pointer-events:none;z-index:85;border-radius:40% 60% 55% 45%;background:#ff5a64;border:2.5px solid #2b2b2b;will-change:transform,opacity}
+.dust{position:fixed;width:12px;height:12px;border-radius:50%;background:rgba(214,203,180,.85);pointer-events:none;z-index:48;animation:dustOut .5s ease-out forwards}
+@keyframes dustOut{0%{transform:translate(-50%,-50%) scale(.5);opacity:.9}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% - 16px)) scale(1.7);opacity:0}}
 
 @keyframes shake{0%,100%{transform:none}20%{transform:translate(-5px,2px)}40%{transform:translate(5px,-2px)}60%{transform:translate(-4px,3px)}80%{transform:translate(4px,-1px)}}
 .stage.shake{animation:shake .35s ease}
@@ -377,6 +399,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   <div class="card-store">🛒 여수식자재마트 <b>어항단지점</b></div>
   <div class="ctitle" id="cardTitle">GOAL!</div>
   <div class="prize-box" id="prizeBox" style="display:none">
+    <div class="pb-rays"></div>
+    <span class="stamp">당첨!</span>
     <div class="cemoji" id="cardEmoji">🎁</div>
     <div class="prize-name" id="prizeName"></div>
     <span class="prize-grade" id="prizeGrade"></span>
@@ -643,6 +667,10 @@ function dragStart(x,y){
   const r=ball.getBoundingClientRect();baseX=r.left+r.width/2;baseY=r.top+r.height/2;
   ball.classList.remove('glow');
   inst.style.opacity='0';
+  /* 키퍼 긴장: 자세 낮추고 집중 */
+  keeperEl.classList.remove('idle');
+  keeperEl.style.transition='transform .2s ease';
+  keeperEl.style.transform='translate(-50%,3px) scale(1.03,.96)';
 }
 function dragMove(x,y){if(!dragOn||shooting)return;updateAim(x-pSX,y-pSY);}
 function dragEnd(x,y){
@@ -657,6 +685,9 @@ function cancelPull(){
   ball.style.transition='transform .3s cubic-bezier(.34,1.8,.5,1)';
   ball.style.transform='translate(-50%,-50%)';
   setTimeout(()=>ball.classList.add('glow'),310);
+  keeperEl.style.transition='transform .25s ease';
+  keeperEl.style.transform='translateX(-50%)';
+  setTimeout(()=>keeperEl.classList.add('idle'),260);
 }
 function snapShoot(zone){
   ball.style.transition='transform .1s cubic-bezier(.3,.7,.4,1)';
@@ -696,6 +727,8 @@ function sndCheer(){try{
 }catch(e){}}
 function sndDrum(){for(let i=0;i<16;i++)setTimeout(()=>tick(.22,1100),i*46);}
 function sndBoom(){beep(70,.5,'sine',.95);tick(.5,300);}
+function sndThud(){beep(85,.14,'sine',.7);tick(.25,420);}
+function sndSplat(){beep(150,.2,'sine',.6);tick(.45,600);tick(.3,1300);}
 function sndTada(){
   [523,659,784,1047].forEach((f,i)=>setTimeout(()=>{beep(f,.3,'triangle',.42);beep(f/2,.3,'square',.1);},i*90));
   setTimeout(()=>beep(1319,.55,'triangle',.45),380);
@@ -712,7 +745,7 @@ function shoot(zone){
   setTimeout(()=>{
     dive(kz);
     flyBall(zone);
-    setTimeout(()=>result(zone),1500);
+    setTimeout(()=>result(zone),2050); /* 폭발+키퍼 후회까지 보고 대공개 */
   },70);
 }
 
@@ -765,9 +798,54 @@ function flyBall(zone){
     if(p<1)requestAnimationFrame(step);
     else{
       sh.remove();sndSwish();stickBallInNet(g,zone);
-      setTimeout(()=>goalImpact(zone),60); /* hit-stop 한 박자 */
+      setTimeout(()=>slicePop(g,zone),140); /* hit-stop → 차차착 슬라이스 */
     }
   })(performance.now());
+}
+
+/* 차차차착! 수박 슬라이스 → 팡 폭발 */
+function slicePop(g,zone){
+  const r=g.getBoundingClientRect();
+  const cx=r.left+r.width/2, cy=r.top+r.height/2;
+  [-34,16,64].forEach((ang,i)=>setTimeout(()=>{slashAt(cx,cy,ang);tick(.32,1700);},i*70));
+  setTimeout(()=>{
+    g.remove();window.__netBall=null;
+    sndSplat();
+    melonBurst(cx,cy);
+    goalImpact(zone);
+  },250);
+}
+function slashAt(x,y,ang){
+  const el=document.createElement('div');el.className='slash';
+  el.style.cssText+=`left:${x}px;top:${y}px;width:${86+Math.random()*30}px;--ra:${ang}deg`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),260);
+}
+/* 수박 조각 포물선 비산 (중력 물리) */
+function melonBurst(cx,cy){
+  const ps=[];
+  for(let i=0;i<13;i++){
+    const isEmo=i<8;
+    const el=document.createElement('div');
+    el.className=isEmo?'piece':'chunk';
+    if(isEmo){el.textContent='🍉';el.style.fontSize=(19+Math.random()*13)+'px';}
+    else{const s=9+Math.random()*8;el.style.width=s+'px';el.style.height=(s*.8)+'px';}
+    document.body.appendChild(el);
+    const a=-Math.PI*(0.12+0.76*Math.random());      /* 위쪽 반구로 발사 */
+    const sp=250+Math.random()*430;
+    ps.push({el,x:cx,y:cy,vx:Math.cos(a)*sp*(Math.random()<.5?-1:1),vy:Math.sin(a)*sp,rot:Math.random()*360,vr:(Math.random()-.5)*760});
+  }
+  const t0=performance.now();let last=t0;
+  (function st(t){
+    const dt=Math.min((t-last)/1000,.05);last=t;
+    const life=(t-t0)/950;
+    ps.forEach(p=>{
+      p.vy+=1500*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.rot+=p.vr*dt;
+      p.el.style.transform=`translate(${p.x-14}px,${p.y-14}px) rotate(${p.rot}deg)`;
+      p.el.style.opacity=life>.72?String(Math.max(1-(life-.72)/.28,0)):'1';
+    });
+    if(life<1)requestAnimationFrame(st);
+    else ps.forEach(p=>p.el.remove());
+  })(t0);
 }
 
 function stickBallInNet(g,zone){
@@ -778,19 +856,56 @@ function stickBallInNet(g,zone){
   setTimeout(()=>{g.style.transform='translate(-50%,-50%) scale(.58)';},260);
 }
 
+/* 다이빙: 웅크림 → 폭발 점프(공중 스트레치) → 착지 */
 function dive(zone){
   curDiveZone=zone;
   keeperEl.classList.remove('idle');
   const[lp,bp,rot]=DIVE[zone];
-  keeperEl.style.left=lp+'%';keeperEl.style.bottom=bp+'%';
-  keeperEl.style.transform=`translateX(-50%) rotate(${rot}deg)`;
+  keeperEl.style.transition='transform .08s ease';
+  keeperEl.style.transform='translateX(-50%) translateY(5px) scale(1.05,.92)';
+  setTimeout(()=>{
+    keeperEl.style.transition='left .3s cubic-bezier(.3,1.35,.5,1),bottom .3s cubic-bezier(.3,1.35,.5,1),transform .3s cubic-bezier(.3,1.35,.5,1)';
+    keeperEl.style.left=lp+'%';keeperEl.style.bottom=bp+'%';
+    keeperEl.style.transform=`translateX(-50%) rotate(${rot}deg) scale(1.07,.95)`;
+    setTimeout(()=>{
+      keeperEl.style.transition='transform .14s ease-out';
+      keeperEl.style.transform=`translateX(-50%) rotate(${rot}deg)`;
+    },330);
+  },85);
   keeperShadow.style.left=lp+'%';
   keeperShadow.style.opacity=bp>20?'.05':'.16';
   const col=zone%3,row=(zone/3)|0;
   setPupils((col-1)*4,(row-1)*3);
 }
 
-/* 골 임팩트: 과즙 폭발 + 펀치 흔들림 + 군중 하이프 */
+/* 골 먹힌 키퍼: 무릎 꿇고 땅을 쾅쾅 (후회) */
+function keeperRegret(){
+  keeperEl.style.transition='transform .24s ease,bottom .24s ease,left .24s ease';
+  keeperEl.style.bottom='0%';
+  keeperEl.style.transform='translateX(-50%) rotate(0deg) scale(1.04,.88)';
+  setTimeout(()=>pound(1),280);
+}
+function pound(i){
+  keeperEl.style.transition='transform .08s ease-in';
+  keeperEl.style.transform='translateX(-50%) translateY(5px) rotate(-7deg) scale(1.05,.84)';
+  setTimeout(()=>{
+    sndThud();dustAtKeeper();vib(15);
+    keeperEl.style.transition='transform .12s ease-out';
+    keeperEl.style.transform='translateX(-50%) rotate(0deg) scale(1.04,.88)';
+    if(i<2)setTimeout(()=>pound(i+1),150);
+    else setTimeout(()=>showEmote('😭'),160);
+  },90);
+}
+function dustAtKeeper(){
+  const r=keeperEl.getBoundingClientRect();
+  for(let i=0;i<5;i++){
+    const d=document.createElement('div');d.className='dust';
+    d.style.cssText+=`left:${r.left+r.width*(0.2+0.6*Math.random())}px;top:${r.bottom-6}px;--dx:${(Math.random()-.5)*64}px`;
+    document.body.appendChild(d);setTimeout(()=>d.remove(),520);
+  }
+}
+
+/* 골 임팩트: 과즙 폭발 + 펀치 흔들림 + 군중 하이프 + 키퍼 후회 */
 function goalImpact(zone){
   netImpactAt(zone);
   stage.classList.add('punch');setTimeout(()=>stage.classList.remove('punch'),440);
@@ -801,6 +916,7 @@ function goalImpact(zone){
   sky.classList.add('hype');
   keeperFace(false);
   showEmote('💦');
+  setTimeout(keeperRegret,220);
 }
 
 /* keeper 표정 전환 (true=웃음) */
@@ -925,7 +1041,10 @@ function fillCard(rec,isRevisit){
   document.getElementById('prizeBox').style.display='block';
   document.getElementById('cardEmoji').textContent=rec.e;
   document.getElementById('prizeName').textContent=rec.n;
-  document.getElementById('prizeGrade').textContent=rec.g;
+  const gr=document.getElementById('prizeGrade');
+  gr.textContent=rec.g;
+  if(/특급/.test(rec.g)){gr.style.background='linear-gradient(180deg,#ffd700,#f59f00)';gr.style.color='#5b3d00';}
+  else{gr.style.background='';gr.style.color='';}
   document.getElementById('prizeMeta').textContent=`당첨번호 ${rec.c} · ${fmtT(rec.t)} · 상품 구성 예시`;
   document.getElementById('cardMsg').innerHTML=isRevisit
     ?'이미 참여하신 기록이에요.<br>아직 경품을 안 받으셨다면 지금 받아가세요!'
