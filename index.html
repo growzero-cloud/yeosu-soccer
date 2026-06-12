@@ -28,13 +28,15 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   align-items:center;justify-content:flex-start;
   padding:0;overflow:hidden;
 }
-.start-top{padding:7vh 24px 0;text-align:center;z-index:2;position:relative}
+.start-top{padding:6vh 24px 0;text-align:center;z-index:2;position:relative}
 .kbadge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.6);border:2px solid rgba(43,43,43,.12);border-radius:100px;padding:5px 14px;font-size:.78rem;font-weight:800;color:#2b6b3a;margin-bottom:14px}
-.start-sup{font-size:1rem;font-weight:800;color:#3a3a3a;letter-spacing:.04em;margin-bottom:6px}
+/* 마트 간판 락업 — 홍보 주인공 */
+.store-name{font-size:2.35rem;font-weight:900;color:var(--orange-d);letter-spacing:-.03em;line-height:1.05;text-shadow:0 2px 0 rgba(255,255,255,.55)}
+.store-branch{display:inline-block;margin-top:9px;background:var(--ink);color:#fff;font-size:.95rem;font-weight:800;border-radius:100px;padding:5px 20px;letter-spacing:.06em}
 .fighting{font-family:'Arial Black','Arial',sans-serif;font-style:italic;font-weight:900;color:var(--ink);line-height:.92;letter-spacing:-.01em;transform:skewX(-7deg)}
-.fighting .l1{font-size:2.5rem;display:block}
-.fighting .l2{font-size:3.7rem;display:block;-webkit-text-stroke:1px var(--ink)}
-.start-desc{margin-top:16px;font-size:.98rem;font-weight:800;color:#444;line-height:1.5}
+.fighting.sm{margin-top:15px}
+.fighting.sm .l1{font-size:1.4rem;display:block}
+.start-desc{margin-top:13px;font-size:1.02rem;font-weight:800;color:#444;line-height:1.5}
 .start-desc .hl{color:var(--orange-d)}
 .start-date{margin-top:4px;font-size:.92rem;font-weight:800;color:#2b6b3a}
 .start-humor{margin-top:10px;font-size:.8rem;font-weight:700;color:#587f63;opacity:.9}
@@ -43,14 +45,15 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .si-ball{position:absolute;left:8%;top:30%;width:88px;height:88px;animation:floaty 3s ease-in-out infinite}
 .si-keeper{position:absolute;right:-4%;bottom:6%;width:62%;max-width:300px;transform:rotate(8deg);animation:floaty 3.4s ease-in-out infinite}
 .dash{position:absolute;border-radius:100px;background:#7fce93;opacity:.8}
+.fgro{position:absolute;z-index:2;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.14));animation:floaty 3.2s ease-in-out infinite}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-12px) rotate(4deg)}}
 @keyframes floaty2{0%,100%{transform:translateY(0) rotate(8deg)}50%{transform:translateY(-12px) rotate(11deg)}}
 
 .btn-dark{
   position:absolute;left:24px;right:24px;bottom:5vh;z-index:5;
-  background:var(--ink);color:#fff;border:none;border-radius:18px;
+  background:linear-gradient(180deg,var(--orange) 0%,var(--orange-d) 100%);color:#fff;border:none;border-radius:18px;
   padding:19px;font-size:1.18rem;font-weight:800;cursor:pointer;
-  box-shadow:0 8px 20px rgba(0,0,0,.22);touch-action:manipulation;
+  box-shadow:0 8px 20px rgba(224,109,18,.4);touch-action:manipulation;
 }
 .btn-dark:active{transform:scale(.97)}
 
@@ -109,6 +112,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 .pkspot{position:absolute;left:50%;top:26%;width:14px;height:7px;background:#eafae4;border-radius:50%;transform:translateX(-50%);opacity:.8}
 .tuft{position:absolute;color:var(--grass2);font-weight:900;font-size:13px;opacity:.55;pointer-events:none;line-height:1}
 
+/* 경기장 펜스 광고보드 — 마트 홍보 */
+.adboard{position:absolute;left:-1%;right:-1%;top:51.2%;height:4.6%;display:flex;gap:6px;z-index:2;padding:0 4px}
+.adboard .ap{flex:1 0 auto;display:flex;align-items:center;justify-content:center;background:#fff;border:2.5px solid var(--ink);border-radius:9px;font-size:.7rem;font-weight:900;color:var(--orange-d);white-space:nowrap;padding:0 12px;box-shadow:0 3px 0 rgba(0,0,0,.13)}
+.adboard .ap.alt{background:linear-gradient(180deg,var(--orange) 0%,var(--orange-d) 100%);color:#fff}
+
 /* Ball (watermelon) */
 .ball{position:absolute;left:50%;top:70%;width:74px;height:74px;transform:translate(-50%,-50%);z-index:8;pointer-events:none}
 .ball svg{width:100%;height:100%;display:block;overflow:visible}
@@ -160,6 +168,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   text-align:center;
 }
 .card.up{transform:translateY(0)}
+.card-store{display:inline-block;background:#fff3e4;color:var(--orange-d);border:1.5px solid #f5c894;font-size:.8rem;font-weight:900;border-radius:100px;padding:5px 15px;margin-bottom:10px}
 .card .ctitle{font-size:1.6rem;font-weight:900;color:var(--ink);margin-bottom:12px}
 .card .ctitle .hl{color:var(--orange-d)}
 .prize-box{background:#fff7ec;border:2px dashed #f0b46a;border-radius:18px;padding:14px 12px 13px;margin-bottom:12px}
@@ -196,11 +205,12 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 <!-- ════ START ════ -->
 <div id="s-start" class="layer">
   <div class="start-top">
-    <span class="kbadge">🇰🇷 대한민국 승리 기원</span>
-    <div class="start-sup">여수식자재마트 어항단지점</div>
-    <div class="fighting"><span class="l1">FIGHTING</span><span class="l2">KOREA</span></div>
-    <div class="start-desc">수박 차GO! <span class="hl">경품</span> 받GO! 🍉</div>
-    <div class="start-date">꽝 없는 응원 이벤트 🎁</div>
+    <span class="kbadge">🇰🇷 2026 월드컵 응원 이벤트</span>
+    <div class="store-name">여수식자재마트</div>
+    <span class="store-branch">어항단지점</span>
+    <div class="fighting sm"><span class="l1">⚽ FIGHTING KOREA ⚽</span></div>
+    <div class="start-desc">수박 슛 차고 <span class="hl">경품</span> 받아가세요! 🍉</div>
+    <div class="start-date">꽝 없음! 100% 전원 당첨 🎁</div>
     <div class="start-humor">참가비 무료! 대신 인간적으로 뭐 하나는 사주실 거죠? 🥹🛒</div>
   </div>
   <div class="start-illust" id="startIllust"></div>
@@ -211,7 +221,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 <div id="s-game" class="layer">
   <div class="hud">
     <div class="hud-pill"><span class="pico" id="hudball"></span><span class="ptxt">여수식자재마트 어항단지점</span></div>
-    <div class="hud-score">🇰🇷 응원</div>
+    <div class="hud-score">🇰🇷 월드컵 응원</div>
   </div>
 
   <div class="stage" id="stage">
@@ -230,6 +240,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
       <div class="fieldline" style="top:34%"></div>
       <div class="pkspot"></div>
     </div>
+
+    <!-- 펜스 광고보드 (마트 홍보) -->
+    <div class="adboard" id="adboard"></div>
 
     <!-- goal (keeper lives inside, positioned on the goal line) -->
     <div class="goalwrap" id="goalwrap">
@@ -261,6 +274,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 <!-- ════ RESULT ════ -->
 <div id="dim"></div>
 <div class="card" id="card">
+  <div class="card-store">🛒 여수식자재마트 <b>어항단지점</b></div>
   <div class="ctitle" id="cardTitle">GOAL!</div>
   <div class="prize-box" id="prizeBox" style="display:none">
     <div class="cemoji" id="cardEmoji">🎁</div>
@@ -271,7 +285,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   <div class="cmsg" id="cardMsg"></div>
   <div class="humor" id="cardHumor"></div>
   <div class="staff-note" id="staffNote" style="display:none">📢 계산대에서 직원에게 이 화면을 보여주세요</div>
-  <div class="cbrand">여수식자재마트 어항단지점 응원 이벤트</div>
+  <div class="cbrand">오늘 장보기는 여수식자재마트 어항단지점에서! 🛒</div>
   <button id="btn-retry" class="btn-dark">한번 더 도전! ⚽</button>
 </div>
 
@@ -388,6 +402,11 @@ const ng=document.getElementById('netGrid');
 const nx0=28,nx1=342,ny0=44,ny1=200;
 for(let x=nx0;x<=nx1;x+=22){const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x);l.setAttribute('y1',ny0);l.setAttribute('x2',x);l.setAttribute('y2',ny1);ng.appendChild(l);}
 for(let y=ny0;y<=ny1;y+=18){const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',nx0);l.setAttribute('y1',y);l.setAttribute('x2',nx1);l.setAttribute('y2',y);ng.appendChild(l);}
+// 펜스 광고보드
+const adb=document.getElementById('adboard');
+['여수식자재마트','신선·최저가','어항단지점','🍉 수박슛 이벤트','여수식자재마트'].forEach((txt,i)=>{
+  const p=document.createElement('div');p.className='ap'+(i%2?' alt':'');p.textContent=txt;adb.appendChild(p);
+});
 // aim zones
 const aimInner=document.getElementById('aimInner');
 for(let i=0;i<9;i++){const d=document.createElement('div');d.className='az';d.dataset.z=i;aimInner.appendChild(d);}
@@ -404,6 +423,12 @@ document.getElementById('keeper').innerHTML=keeperSVG();
   });
   const b=document.createElement('div');b.className='si-ball';b.innerHTML=wmSVG();root.appendChild(b);
   const k=document.createElement('div');k.className='si-keeper';k.innerHTML=keeperSVG();root.appendChild(k);
+  // 떠다니는 경품 식자재
+  [['🥩',6,8,1.9],['🍅',30,16,1.5],['🦑',55,6,1.7],['🥒',5,62,1.5],['🍚',38,44,1.4],['🍄',84,16,1.3]].forEach(([ch,x,y,sz],i)=>{
+    const g=document.createElement('div');g.className='fgro';g.textContent=ch;
+    g.style.cssText=`left:${x}%;top:${y}%;font-size:${sz}rem;animation-delay:${i*.4}s`;
+    root.appendChild(g);
+  });
 })();
 
 /* ───────── Prize pool (예시 구성) ─────────
