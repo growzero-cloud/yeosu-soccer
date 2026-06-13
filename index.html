@@ -569,10 +569,17 @@ const PRIZES=[
 ];
 function drawPrize(){const tot=PRIZES.reduce((s,p)=>s+p.w,0);let r=Math.random()*tot;for(const p of PRIZES){r-=p.w;if(r<0)return p;}return PRIZES[PRIZES.length-1];}
 
-/* ───────── 1회 참여 제한 (폰 브라우저 기록 / ?test=1 우회) ───────── */
+/* ═══════════ 행사 운영 스위치 ═══════════
+   ★ 행사 시작하는 날, 아래 EVENT_LIVE 만 true 로 바꾸세요. (QR 주소는 그대로)
+     false = 테스트 중  → 횟수 제한 없음 (무제한 플레이)
+     true  = 행사 진행  → 한 폰당 1회만 (당첨 후 잠김)
+   ?test=1 을 주소 뒤에 붙이면 행사 중이라도 그 폰만 무제한 (직원 시연용). */
+const EVENT_LIVE=false;
+
+/* ───────── 1회 참여 제한 (폰 브라우저 localStorage 기록) ───────── */
 const PKEY='yeosu_wm_play_v1';
-const PLAY_TEST=/[?&]test/.test(location.search);
-if(PLAY_TEST){try{localStorage.removeItem(PKEY);}catch(e){}}
+const UNLIMITED=(!EVENT_LIVE)||/[?&]test/.test(location.search);
+if(UNLIMITED){try{localStorage.removeItem(PKEY);}catch(e){}}
 let LOCKED=false;
 function getRec(){try{return JSON.parse(localStorage.getItem(PKEY)||'null');}catch(e){return null;}}
 function fmtT(ts){const d=new Date(ts);const p=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`;}
@@ -610,7 +617,7 @@ document.getElementById('btn-retry').addEventListener('click',()=>{sndPop();rese
 
 /* boot: 이미 참여한 폰 → 수령권 화면 */
 const rec0=getRec();
-if(rec0&&!PLAY_TEST){
+if(rec0&&!UNLIMITED){
   LOCKED=true;show(sGame);
   setTimeout(()=>{fillCard(rec0,true);dim.classList.add('on');card.classList.add('up');},250);
 }else{
@@ -1023,7 +1030,7 @@ reveal.addEventListener('click',()=>{if(rvDone)finishReveal();});
 function result(zone){
   const p=drawPrize();
   const rec={e:p.e,n:p.n,g:p.g,t:Date.now(),c:mkCode()};
-  if(!PLAY_TEST){
+  if(!UNLIMITED){
     try{localStorage.setItem(PKEY,JSON.stringify(rec));}catch(e){}
     LOCKED=true;
   }
@@ -1052,7 +1059,7 @@ function fillCard(rec,isRevisit){
   document.getElementById('cardHumor').textContent='참가비는 무료지만… 인간적으로 뭐 하나는 사주실 거죠? 🥹🛒';
   const staff=document.getElementById('staffNote');
   const btn=document.getElementById('btn-retry');
-  if(PLAY_TEST){staff.style.display='none';btn.style.display='block';btn.textContent='한번 더 테스트 🔁';}
+  if(UNLIMITED){staff.style.display='none';btn.style.display='block';btn.textContent='한번 더 도전! ⚽';}
   else{staff.style.display='block';btn.style.display='none';}
 }
 
