@@ -611,23 +611,19 @@ const PRIZES=[
 ];
 function drawPrize(){const tot=PRIZES.reduce((s,p)=>s+p.w,0);let r=Math.random()*tot;for(const p of PRIZES){r-=p.w;if(r<0)return p;}return PRIZES[PRIZES.length-1];}
 
-/* ═══════════ 행사 운영 스위치 ═══════════
-   ★ 행사 시작하는 날, 아래 EVENT_LIVE 만 true 로 바꾸세요. (QR 주소는 그대로)
-     false = 테스트 중  → 횟수 제한 없음 (무제한 플레이)
-     true  = 행사 진행  → 한 폰당 1회만 (당첨 후 잠김)
-   ?test=1 을 주소 뒤에 붙이면 행사 중이라도 그 폰만 무제한 (직원 시연용). */
-const EVENT_LIVE=false;
-
-/* ───────── 1회 참여 제한 (폰 브라우저 localStorage 기록) ───────── */
+/* ═══════════ 운영 모드 ═══════════
+   모드는 서버(구글 Apps Script)가 기억하고, 관리자 페이지 버튼으로 바꿉니다:
+     ready  = 준비/테스트 (재고 안 깎임·무제한)  ← 기본
+     live   = 실전        (재고 차감·한 폰 1회)
+     extend = 연장        (지정상품만 무제한 지급·한 폰 1회)
+   게임은 매 골마다 서버에 물어보고 서버가 시키는 대로 합니다(잠금 여부 포함).
+   주소 뒤 ?test=1 = 인터넷 없이 로컬 예시로 시연(서버 안 부름). */
 const PKEY='yeosu_wm_play_v1';
-const UNLIMITED=(!EVENT_LIVE)||/[?&]test/.test(location.search);
-if(UNLIMITED){try{localStorage.removeItem(PKEY);}catch(e){}}
+const TEST=/[?&]test/.test(location.search);
+if(TEST){try{localStorage.removeItem(PKEY);}catch(e){}}
 
-/* ───────── 공유 재고 서버 (구글 Apps Script) ─────────
-   SERVER_MODE면 서버에서 추첨·재고차감(전 손님 공유), 아니면 로컬 예시풀.
-   행사 땐 EVENT_LIVE=true → 서버. 테스트로 서버 확인하려면 주소에 ?live=1 */
+/* 공유 재고 서버 */
 const PRIZE_API='https://script.google.com/macros/s/AKfycbxI2NsPnN6hQ5Gq_mgZKkZJp1Yb9Fgtp29d3LcYvjnFcfn4TizLi7m8BTWdPpGJ6vLM/exec';
-const SERVER_MODE=EVENT_LIVE||/[?&]live/.test(location.search);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function drawServer(){
   for(let i=0;i<2;i++){
@@ -672,9 +668,9 @@ document.getElementById('btn-retry').addEventListener('click',()=>{sndPop();rese
 
 /* boot: 이미 참여한 폰 → 수령권 화면 */
 const rec0=getRec();
-if(rec0&&!UNLIMITED){
+if(rec0&&!TEST){
   LOCKED=true;show(sGame);
-  setTimeout(()=>{fillCard(rec0,true);dim.classList.add('on');card.classList.add('up');},250);
+  setTimeout(()=>{fillCard(rec0,true,true);dim.classList.add('on');card.classList.add('up');},250);
 }else{
   show(sStart);
 }
@@ -1098,21 +1094,21 @@ reveal.addEventListener('click',()=>{if(rvDone)finishReveal();});
 /* ───────── Result: 서버 추첨(공유 재고) 또는 로컬 예시풀 ───────── */
 async function result(zone){
   revealStart();
-  let rec=null, state='ok';
-  if(SERVER_MODE){
+  let rec=null, state='ok', lock=false;
+  if(TEST){
+    await sleep(760);
+    const p=drawPrize(); rec={e:p.e,n:p.n,g:p.g,tier:p.tier||1,t:Date.now(),c:mkCode()};
+  }else{
     const d=await drawServer();
     if(!d) state='err';
     else if(d.soldout) state='sold';
-    else rec={e:d.emoji,n:d.name,g:d.grade,tier:Number(d.tier)||1,t:Date.now(),c:d.code};
-  }else{
-    await sleep(760);
-    const p=drawPrize(); rec={e:p.e,n:p.n,g:p.g,tier:p.tier||1,t:Date.now(),c:mkCode()};
+    else { rec={e:d.emoji,n:d.name,g:d.grade,tier:Number(d.tier)||1,t:Date.now(),c:d.code}; lock=!!d.lock; }
   }
   if(state==='err'){revealAbort();showSpecialCard('네트워크 오류 ⚠️','연결을 확인하고<br>다시 시도해 주세요.',true);return;}
-  if(state==='sold'){revealAbort();showSpecialCard('오늘은 <span class="hl">마감</span>됐어요 🙏','준비된 경품이 모두 소진됐습니다.<br>다음 기회에 또 도전해 주세요!',UNLIMITED);return;}
-  if(!UNLIMITED){try{localStorage.setItem(PKEY,JSON.stringify(rec));}catch(e){}LOCKED=true;}
+  if(state==='sold'){revealAbort();showSpecialCard('오늘은 <span class="hl">마감</span>됐어요 🙏','준비된 경품이 모두 소진됐습니다.<br>다음 기회에 또 도전해 주세요!',TEST);return;}
+  if(lock){try{localStorage.setItem(PKEY,JSON.stringify(rec));}catch(e){}LOCKED=true;}
   revealReveal(rec,()=>{
-    fillCard(rec,false);sndPop();
+    fillCard(rec,false,lock);sndPop();
     dim.classList.add('on');card.classList.add('up');
     confetti(40);
   });
@@ -1130,7 +1126,7 @@ function showSpecialCard(title,msg,retry){
   dim.classList.add('on');card.classList.add('up');
 }
 
-function fillCard(rec,isRevisit){
+function fillCard(rec,isRevisit,lock){
   document.getElementById('cardTitle').innerHTML=isRevisit
     ?'참여 완료! <span class="hl">당첨 확인</span> ✅'
     :'GOAL! <span class="hl">당첨을 축하합니다!</span> 🎉';
@@ -1141,15 +1137,15 @@ function fillCard(rec,isRevisit){
   gr.textContent=rec.g;
   if((rec.tier&&rec.tier>=3)||/특급|최고급/.test(rec.g||'')){gr.style.background='linear-gradient(180deg,#ffd700,#f59f00)';gr.style.color='#5b3d00';}
   else{gr.style.background='';gr.style.color='';}
-  document.getElementById('prizeMeta').textContent=`당첨번호 ${rec.c} · ${fmtT(rec.t)}`+(SERVER_MODE?'':' · 상품 구성 예시');
+  document.getElementById('prizeMeta').textContent=`당첨번호 ${rec.c} · ${fmtT(rec.t)}`+(TEST?' · 상품 구성 예시':'');
   document.getElementById('cardMsg').innerHTML=isRevisit
     ?'이미 참여하신 기록이에요.<br>아직 경품을 안 받으셨다면 지금 받아가세요!'
     :'완벽한 슈팅! 오늘 대한민국도 골 폭죽 🇰🇷';
   document.getElementById('cardHumor').textContent='아무거나 하나만 사도 참여 가능! 🛒 오늘 장보고 경품 받아가세요';
   const staff=document.getElementById('staffNote');
   const btn=document.getElementById('btn-retry');
-  if(UNLIMITED){staff.style.display='none';btn.style.display='block';btn.textContent='한번 더 도전! ⚽';}
-  else{staff.style.display='block';btn.style.display='none';}
+  if(lock){staff.style.display='block';btn.style.display='none';}
+  else{staff.style.display='none';btn.style.display='block';btn.textContent='한번 더 도전! ⚽';}
 }
 
 /* Confetti — 식자재 조각이 함께 떨어짐 */

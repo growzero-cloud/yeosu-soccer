@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>관리자 · 오! 필승 골이야</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+  body{background:#0f1b2e;color:#eaf1fb;min-height:100vh;padding:20px 16px 40px;max-width:520px;margin:0 auto}
+  h1{font-size:1.25rem;font-weight:900;text-align:center;margin-bottom:4px}
+  .sub{text-align:center;color:#8fa6c4;font-size:.82rem;margin-bottom:18px}
+  .status{background:#16273f;border-radius:16px;padding:18px;text-align:center;margin-bottom:16px;border:2px solid #243a5d}
+  .mode-label{font-size:.8rem;color:#8fa6c4;font-weight:700}
+  .mode{font-size:1.9rem;font-weight:900;margin:4px 0 2px}
+  .mode.ready{color:#9aa7b8}.mode.live{color:#46d17a}.mode.extend{color:#ffb13d}
+  .remain{font-size:1.05rem;font-weight:800;color:#eaf1fb}
+  .remain b{font-size:1.5rem;color:#ffd24a}
+  .ext-now{margin-top:6px;font-size:.85rem;color:#ffb13d;font-weight:700}
+  .sec{background:#16273f;border-radius:16px;padding:16px;margin-bottom:14px;border:1px solid #243a5d}
+  .sec h2{font-size:.95rem;font-weight:800;margin-bottom:4px;color:#cfe0f5}
+  .sec p{font-size:.8rem;color:#8fa6c4;line-height:1.5;margin-bottom:12px}
+  button{width:100%;border:none;border-radius:14px;padding:16px;font-size:1.08rem;font-weight:900;cursor:pointer;touch-action:manipulation;color:#fff;margin-top:8px}
+  button:active{transform:scale(.98)}
+  .b-live{background:linear-gradient(180deg,#2ecc71,#27a35a)}
+  .b-ext{background:linear-gradient(180deg,#ffa726,#f57c00)}
+  .b-stop{background:linear-gradient(180deg,#5b6b82,#3f4d61)}
+  .b-ready{background:linear-gradient(180deg,#42597a,#2d3f59)}
+  .b-refresh{background:#243a5d}
+  select{width:100%;padding:13px;border-radius:12px;border:2px solid #2d3f59;background:#0f1b2e;color:#eaf1fb;font-size:1rem;font-weight:700}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#2ecc71;color:#03260f;font-weight:900;padding:13px 22px;border-radius:100px;opacity:0;transition:all .3s;z-index:10;max-width:90%;text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{background:#ff5a5a;color:#fff}
+  .list{margin-top:10px;font-size:.82rem;color:#aebfd6;line-height:1.7}
+  .list .row{display:flex;justify-content:space-between;border-bottom:1px solid #22344f;padding:3px 0}
+  .keybar{background:#16273f;border-radius:12px;padding:12px;margin-bottom:14px;display:flex;gap:8px}
+  .keybar input{flex:1;padding:10px;border-radius:10px;border:2px solid #2d3f59;background:#0f1b2e;color:#eaf1fb;font-size:.95rem}
+  .keybar button{width:auto;padding:10px 16px;margin:0;background:#243a5d;font-size:.9rem}
+  .warn{color:#ff9d8a;font-size:.78rem;margin-top:6px}
+</style>
+</head>
+<body>
+  <h1>🧤 오! 필승 골이야 · 관리자</h1>
+  <div class="sub">여수식자재마트 어항단지점</div>
+
+  <div id="keybar" class="keybar" style="display:none">
+    <input id="keyin" type="text" placeholder="관리자 비밀키 입력">
+    <button onclick="saveKey()">확인</button>
+  </div>
+
+  <div class="status">
+    <div class="mode-label">현재 모드</div>
+    <div class="mode" id="modeTxt">…</div>
+    <div class="remain">남은 상품 <b id="remainTxt">–</b> 개</div>
+    <div class="ext-now" id="extNow"></div>
+  </div>
+
+  <div class="sec">
+    <h2>① 실전 시작 / 리셋</h2>
+    <p>행사 시작할 때 누르세요. <b>실전 모드</b>로 전환되고 당첨기록이 0부터 시작됩니다. (시트에 등록된 상품 수가 시작 기준)</p>
+    <button class="b-live" onclick="doReset()">🚀 실전 리셋 · 시작</button>
+  </div>
+
+  <div class="sec">
+    <h2>② 연장 모드</h2>
+    <p>상품이 다 소진됐는데 마감시간 전이라 더 돌려야 할 때. 아래에서 <b>연장용 상품</b> 하나를 고르고 켜면, 그 상품만 무제한 지급됩니다. (한 폰당 1회는 유지)</p>
+    <select id="extSel"></select>
+    <button class="b-refresh" style="margin-top:8px" onclick="saveExtend()">연장 상품 저장</button>
+    <button class="b-ext" onclick="setMode('extend')">➕ 연장 켜기</button>
+    <button class="b-stop" onclick="setMode('live')">⏹ 연장 끄기 (실전으로)</button>
+  </div>
+
+  <div class="sec">
+    <h2>③ 준비/테스트 모드</h2>
+    <p>행사 전·점검용. 손님이 눌러도 <b>재고가 안 줄고</b> 무제한입니다.</p>
+    <button class="b-ready" onclick="setMode('ready')">⏸ 준비/테스트로</button>
+  </div>
+
+  <button class="b-refresh" onclick="load()">🔄 새로고침</button>
+  <div class="list" id="itemList"></div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbxI2NsPnN6hQ5Gq_mgZKkZJp1Yb9Fgtp29d3LcYvjnFcfn4TizLi7m8BTWdPpGJ6vLM/exec';
+let KEY=new URLSearchParams(location.search).get('k')||localStorage.getItem('ohp_admin_key')||'';
+const MODE_KO={ready:'준비 / 테스트',live:'실전 진행중',extend:'연장 중'};
+
+function toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');setTimeout(()=>t.className='toast',2200);}
+function saveKey(){const v=document.getElementById('keyin').value.trim();if(v){KEY=v;localStorage.setItem('ohp_admin_key',v);document.getElementById('keybar').style.display='none';load();}}
+
+async function api(params){
+  const u=API+'?'+params+'&key='+encodeURIComponent(KEY)+'&t='+Date.now();
+  const r=await fetch(u,{cache:'no-store'}); return r.json();
+}
+
+async function load(){
+  try{
+    const c=await (await fetch(API+'?action=config&t='+Date.now(),{cache:'no-store'})).json();
+    const m=c.mode||'ready';
+    const mt=document.getElementById('modeTxt');
+    mt.textContent=MODE_KO[m]||m; mt.className='mode '+m;
+    document.getElementById('remainTxt').textContent=c.remaining;
+    document.getElementById('extNow').textContent=c.extend?('연장 상품: '+(c.extend.emoji||'')+' '+c.extend.name):'';
+    const sel=document.getElementById('extSel');
+    sel.innerHTML=(c.items||[]).map(it=>`<option value="${it.name.replace(/"/g,'&quot;')}">${it.emoji||''} ${it.name} (${it.grade}, ${it.qty}개)</option>`).join('');
+    if(c.extend) sel.value=c.extend.name;
+    document.getElementById('itemList').innerHTML='<div class="row"><b>상품</b><b>남은수량</b></div>'+
+      (c.items||[]).map(it=>`<div class="row"><span>${it.emoji||''} ${it.name} · ${it.grade}</span><span>${it.qty}</span></div>`).join('');
+  }catch(e){ toast('불러오기 실패 — 인터넷 확인',1); }
+}
+
+async function doReset(){
+  if(!confirm('실전 모드로 전환하고 당첨기록을 0부터 시작합니다.\n행사 시작할 때만 누르세요. 진행할까요?'))return;
+  try{const d=await api('action=reset'); if(d.ok){toast('🚀 실전 시작! 기록 초기화 완료');load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
+}
+async function setMode(m){
+  const names={ready:'준비/테스트',live:'실전',extend:'연장'};
+  if(m==='extend'&&!confirm('연장 모드로 전환합니다. 선택한 연장상품만 무제한 지급됩니다. 진행할까요?'))return;
+  try{const d=await api('action=setmode&mode='+m); if(d.ok){toast('모드 → '+names[m]);load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
+}
+async function saveExtend(){
+  const v=document.getElementById('extSel').value; if(!v){toast('상품을 먼저 고르세요',1);return;}
+  try{const d=await api('action=setextend&item='+encodeURIComponent(v)); if(d.ok){toast('연장 상품 저장: '+v);load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
+}
+
+if(!KEY){document.getElementById('keybar').style.display='flex';} else { if(new URLSearchParams(location.search).get('k')) localStorage.setItem('ohp_admin_key',KEY); }
+load();
+</script>
+</body>
+</html>
