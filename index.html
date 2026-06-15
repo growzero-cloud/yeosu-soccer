@@ -597,17 +597,17 @@ document.getElementById('keeper').innerHTML='<img src="jangjangnim.png" alt="점
 /* ───────── Prize pool (예시 구성) ─────────
    TODO: 실제 1500개 상품 리스트 확정 시 맥미니 서버(공유 재고) 연동 예정. */
 const PRIZES=[
-  {e:'🍉',n:'수박 한 통',      g:'특급 경품',w:2},
-  {e:'🥩',n:'한우 사골세트',    g:'특급 경품',w:1},
-  {e:'🥔',n:'감자 한 박스',     g:'특급 경품',w:1},
-  {e:'🥓',n:'삼겹살 한 팩',     g:'우수 경품',w:6},
-  {e:'🦑',n:'오징어 한 마리',   g:'우수 경품',w:8},
-  {e:'🍚',n:'햇반 세트',        g:'우수 경품',w:6},
-  {e:'🍅',n:'방울토마토 500g', g:'경품',w:18},
-  {e:'🥒',n:'애호박 1개',       g:'경품',w:18},
-  {e:'🍄',n:'팽이버섯 1봉',     g:'경품',w:18},
-  {e:'🌶️',n:'고추 150g',       g:'경품',w:12},
-  {e:'🧄',n:'깐마늘 한 팩',     g:'경품',w:10},
+  {e:'🍉',n:'수박 한 통',      g:'특급 경품',tier:3,w:2},
+  {e:'🥩',n:'한우 사골세트',    g:'특급 경품',tier:3,w:1},
+  {e:'🥔',n:'감자 한 박스',     g:'특급 경품',tier:3,w:1},
+  {e:'🥓',n:'삼겹살 한 팩',     g:'우수 경품',tier:2,w:6},
+  {e:'🦑',n:'오징어 한 마리',   g:'우수 경품',tier:2,w:8},
+  {e:'🍚',n:'햇반 세트',        g:'우수 경품',tier:2,w:6},
+  {e:'🍅',n:'방울토마토 500g', g:'경품',tier:1,w:18},
+  {e:'🥒',n:'애호박 1개',       g:'경품',tier:1,w:18},
+  {e:'🍄',n:'팽이버섯 1봉',     g:'경품',tier:1,w:18},
+  {e:'🌶️',n:'고추 150g',       g:'경품',tier:1,w:12},
+  {e:'🧄',n:'깐마늘 한 팩',     g:'경품',tier:1,w:10},
 ];
 function drawPrize(){const tot=PRIZES.reduce((s,p)=>s+p.w,0);let r=Math.random()*tot;for(const p of PRIZES){r-=p.w;if(r<0)return p;}return PRIZES[PRIZES.length-1];}
 
@@ -622,6 +622,19 @@ const EVENT_LIVE=false;
 const PKEY='yeosu_wm_play_v1';
 const UNLIMITED=(!EVENT_LIVE)||/[?&]test/.test(location.search);
 if(UNLIMITED){try{localStorage.removeItem(PKEY);}catch(e){}}
+
+/* ───────── 공유 재고 서버 (구글 Apps Script) ─────────
+   SERVER_MODE면 서버에서 추첨·재고차감(전 손님 공유), 아니면 로컬 예시풀.
+   행사 땐 EVENT_LIVE=true → 서버. 테스트로 서버 확인하려면 주소에 ?live=1 */
+const PRIZE_API='https://script.google.com/macros/s/AKfycbxI2NsPnN6hQ5Gq_mgZKkZJp1Yb9Fgtp29d3LcYvjnFcfn4TizLi7m8BTWdPpGJ6vLM/exec';
+const SERVER_MODE=EVENT_LIVE||/[?&]live/.test(location.search);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function drawServer(){
+  for(let i=0;i<2;i++){
+    try{const r=await fetch(PRIZE_API+'?action=draw',{cache:'no-store'});const d=await r.json();if(d&&d.ok)return d;}catch(e){}
+  }
+  return null;
+}
 let LOCKED=false;
 function getRec(){try{return JSON.parse(localStorage.getItem(PKEY)||'null');}catch(e){return null;}}
 function fmtT(ts){const d=new Date(ts);const p=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`;}
@@ -1039,31 +1052,41 @@ function speedDashes(){
 
 /* ───────── 경품 대공개 시퀀스 ───────── */
 let rvTimers=[],rvDone=null;
-function playReveal(rec,done){
-  rvDone=done;
-  const rvE=document.getElementById('rvEmoji'),rvN=document.getElementById('rvName'),
-        rvG=document.getElementById('rvGrade'),rvL=document.getElementById('rvLabel'),
-        rvR=document.getElementById('rvRing');
+const $rv=id=>document.getElementById(id);
+
+/* 추첨 서스펜스 시작: 오버레이 + 드럼롤 (서버 응답 기다리는 동안 시간 벌기) */
+function revealStart(){
+  rvTimers.forEach(clearTimeout);rvTimers=[];
+  const rvE=$rv('rvEmoji'),rvN=$rv('rvName'),rvG=$rv('rvGrade'),rvL=$rv('rvLabel'),rvR=$rv('rvRing');
   rvE.className='rv-emoji';rvN.className='rv-name';rvG.className='rv-grade';rvL.className='rv-label';rvR.className='rv-ring';
-  rvE.textContent='';rvN.textContent='';rvG.textContent='';
+  rvE.textContent='🎁';rvN.textContent='';rvG.textContent='';rvL.textContent='🎁 오늘의 경품은… 🎁';
   reveal.style.display='flex';
-  void reveal.offsetWidth; /* force reflow — rAF는 백그라운드에서 멈추므로 사용 금지 */
+  void reveal.offsetWidth;
   reveal.style.opacity='1';
-  const T=(fn,ms)=>rvTimers.push(setTimeout(fn,ms));
+  rvL.classList.add('show');
   sndDrum();
-  T(()=>rvL.classList.add('show'),140);
-  T(()=>{
-    rvE.textContent=rec.e;rvE.classList.add('slam');
-    rvR.classList.add('go');
-    sndBoom();vib([25,40,90]);
-    reveal.classList.add('shakeit');T(()=>reveal.classList.remove('shakeit'),330);
-    burstAt(innerWidth/2,innerHeight*.42,['#FFD700','#fff','#ffe27a','#ffab40'],24,70,190);
-  },780);
-  T(()=>{rvN.textContent=rec.n;rvN.classList.add('stamp');sndTada();},1180);
-  T(()=>{rvG.textContent=rec.g;rvG.classList.add('pop');confetti(90);},1430);
-  T(()=>confetti(60),1900);
-  T(finishReveal,2650);
 }
+
+/* 등급(tier)별 화려함 차등으로 경품 공개. tier 3=초화려, 2=화려, 1=기본 */
+function revealReveal(rec,done){
+  rvDone=done;
+  const rvE=$rv('rvEmoji'),rvN=$rv('rvName'),rvG=$rv('rvGrade'),rvR=$rv('rvRing');
+  const tier=rec.tier||1;
+  const T=(fn,ms)=>rvTimers.push(setTimeout(fn,ms));
+  rvE.textContent=rec.e;rvE.classList.add('slam');rvR.classList.add('go');
+  if(tier>=2)sndBoom(); else sndPop();
+  vib(tier>=3?[25,40,90]:tier>=2?[20,50]:[15]);
+  if(tier>=2){reveal.classList.add('shakeit');T(()=>reveal.classList.remove('shakeit'),330);}
+  const col=tier>=3?['#FFD700','#fff','#ffe27a','#ffab40','#ff5a5a']:tier>=2?['#FFD700','#fff','#ffe27a']:['#ffe27a','#fff'];
+  burstAt(innerWidth/2,innerHeight*.42,col,tier>=3?28:tier>=2?20:12,60,tier>=3?200:tier>=2?150:110);
+  if(tier>=3)flashGold();
+  T(()=>{rvN.textContent=rec.n;rvN.classList.add('stamp');sndTada();},360);
+  T(()=>{rvG.textContent=rec.g;rvG.classList.add('pop');if(tier>=2)confetti(tier>=3?90:55);},640);
+  if(tier>=3)T(()=>confetti(60),1120);
+  T(finishReveal,tier>=3?1950:1500);
+}
+
+function revealAbort(){rvTimers.forEach(clearTimeout);rvTimers=[];rvDone=null;reveal.style.opacity='0';setTimeout(()=>{reveal.style.display='none';},300);}
 function finishReveal(){
   rvTimers.forEach(clearTimeout);rvTimers=[];
   reveal.style.opacity='0';
@@ -1072,19 +1095,39 @@ function finishReveal(){
 }
 reveal.addEventListener('click',()=>{if(rvDone)finishReveal();});
 
-/* ───────── Result ───────── */
-function result(zone){
-  const p=drawPrize();
-  const rec={e:p.e,n:p.n,g:p.g,t:Date.now(),c:mkCode()};
-  if(!UNLIMITED){
-    try{localStorage.setItem(PKEY,JSON.stringify(rec));}catch(e){}
-    LOCKED=true;
+/* ───────── Result: 서버 추첨(공유 재고) 또는 로컬 예시풀 ───────── */
+async function result(zone){
+  revealStart();
+  let rec=null, state='ok';
+  if(SERVER_MODE){
+    const d=await drawServer();
+    if(!d) state='err';
+    else if(d.soldout) state='sold';
+    else rec={e:d.emoji,n:d.name,g:d.grade,tier:Number(d.tier)||1,t:Date.now(),c:d.code};
+  }else{
+    await sleep(760);
+    const p=drawPrize(); rec={e:p.e,n:p.n,g:p.g,tier:p.tier||1,t:Date.now(),c:mkCode()};
   }
-  playReveal(rec,()=>{
+  if(state==='err'){revealAbort();showSpecialCard('네트워크 오류 ⚠️','연결을 확인하고<br>다시 시도해 주세요.',true);return;}
+  if(state==='sold'){revealAbort();showSpecialCard('오늘은 <span class="hl">마감</span>됐어요 🙏','준비된 경품이 모두 소진됐습니다.<br>다음 기회에 또 도전해 주세요!',UNLIMITED);return;}
+  if(!UNLIMITED){try{localStorage.setItem(PKEY,JSON.stringify(rec));}catch(e){}LOCKED=true;}
+  revealReveal(rec,()=>{
     fillCard(rec,false);sndPop();
     dim.classList.add('on');card.classList.add('up');
     confetti(40);
   });
+}
+
+/* 매진/오류 등 특수 카드 */
+function showSpecialCard(title,msg,retry){
+  $rv('cardTitle').innerHTML=title;
+  $rv('prizeBox').style.display='none';
+  $rv('cardMsg').innerHTML=msg;
+  $rv('cardHumor').textContent='';
+  $rv('staffNote').style.display='none';
+  const btn=$rv('btn-retry');
+  if(retry){btn.style.display='block';btn.textContent='다시 시도 🔄';}else{btn.style.display='none';}
+  dim.classList.add('on');card.classList.add('up');
 }
 
 function fillCard(rec,isRevisit){
@@ -1096,9 +1139,9 @@ function fillCard(rec,isRevisit){
   document.getElementById('prizeName').textContent=rec.n;
   const gr=document.getElementById('prizeGrade');
   gr.textContent=rec.g;
-  if(/특급/.test(rec.g)){gr.style.background='linear-gradient(180deg,#ffd700,#f59f00)';gr.style.color='#5b3d00';}
+  if((rec.tier&&rec.tier>=3)||/특급|최고급/.test(rec.g||'')){gr.style.background='linear-gradient(180deg,#ffd700,#f59f00)';gr.style.color='#5b3d00';}
   else{gr.style.background='';gr.style.color='';}
-  document.getElementById('prizeMeta').textContent=`당첨번호 ${rec.c} · ${fmtT(rec.t)} · 상품 구성 예시`;
+  document.getElementById('prizeMeta').textContent=`당첨번호 ${rec.c} · ${fmtT(rec.t)}`+(SERVER_MODE?'':' · 상품 구성 예시');
   document.getElementById('cardMsg').innerHTML=isRevisit
     ?'이미 참여하신 기록이에요.<br>아직 경품을 안 받으셨다면 지금 받아가세요!'
     :'완벽한 슈팅! 오늘 대한민국도 골 폭죽 🇰🇷';
