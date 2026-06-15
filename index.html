@@ -25,10 +25,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 
 /* ════════════ START ════════════ */
 #s-start{
-  background:linear-gradient(170deg,var(--mint1) 0%,var(--mint2) 60%,var(--mint3) 100%);
-  align-items:center;justify-content:flex-start;
+  background:linear-gradient(170deg,#16233f 0%,#0d1830 100%);
+  align-items:center;justify-content:center;
   padding:0;overflow:hidden;
 }
+.start-poster{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:1}
 .start-top{padding:6vh 24px 0;text-align:center;z-index:2;position:relative}
 .start-top>*{opacity:0;animation:fadeUp .55s cubic-bezier(.2,.9,.3,1) forwards}
 .start-top>*:nth-child(1){animation-delay:.05s}
@@ -281,17 +282,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 
 <!-- ════ START ════ -->
 <div id="s-start" class="layer">
-  <div class="start-top">
-    <span class="kbadge">🇰🇷 2026 월드컵 응원 이벤트</span>
-    <div class="store-name">여수식자재마트</div>
-    <span class="store-branch">어항단지점</span>
-    <div class="fighting sm"><span class="l1">⚽ FIGHTING KOREA ⚽</span></div>
-    <div class="start-desc">수박 슛 차고 <span class="hl">경품</span> 받아가세요! 🍉</div>
-    <div class="start-date">꽝 없음! 100% 전원 당첨 🎁</div>
-    <div class="start-humor">참가비 무료! 대신 인간적으로 뭐 하나는 사주실 거죠? 🥹🛒</div>
-  </div>
-  <div class="start-illust" id="startIllust"></div>
-  <button id="btn-start" class="btn-dark">시작하기</button>
+  <img class="start-poster" src="start_poster.png" alt="오! 필승 골이야 - 여수식자재마트 어항단지점">
+  <button id="btn-start" class="btn-dark">시작하기 👆</button>
 </div>
 
 <!-- ════ GAME ════ -->
@@ -585,20 +577,7 @@ for(let i=0;i<9;i++){const d=document.createElement('div');d.className='az';d.da
 document.getElementById('hudball').innerHTML=wmSVG();
 document.getElementById('ball').innerHTML=wmSVG();
 document.getElementById('keeper').innerHTML='<img src="jangjangnim.png" alt="점장님 골키퍼" draggable="false">';
-(function(){
-  const root=document.getElementById('startIllust');
-  [[20,20,40,8,20],[60,30,30,7,-30],[80,55,46,8,15],[35,60,34,7,-20],[70,12,28,6,40],[15,45,30,7,10]].forEach(([x,y,w,h,r])=>{
-    const d=document.createElement('div');d.className='dash';
-    d.style.cssText=`left:${x}%;top:${y}%;width:${w}px;height:${h}px;transform:rotate(${r}deg)`;root.appendChild(d);
-  });
-  const b=document.createElement('div');b.className='si-ball';b.innerHTML=wmSVG();root.appendChild(b);
-  const k=document.createElement('div');k.className='si-keeper';k.innerHTML='<img src="jangjangnim.png" alt="점장님" draggable="false" style="width:100%;display:block">';root.appendChild(k);
-  [['🥩',6,8,1.9],['🍅',30,16,1.5],['🦑',55,6,1.7],['🥒',5,62,1.5],['🍚',38,44,1.4],['🍄',84,16,1.3]].forEach(([ch,x,y,sz],i)=>{
-    const g=document.createElement('div');g.className='fgro';g.textContent=ch;
-    g.style.cssText=`left:${x}%;top:${y}%;font-size:${sz}rem;animation-delay:${i*.4}s`;
-    root.appendChild(g);
-  });
-})();
+/* 시작화면은 포스터 이미지(start_poster.png)로 대체 — 별도 일러스트 생성 없음 */
 
 /* ───────── Prize pool (예시 구성) ─────────
    TODO: 실제 1500개 상품 리스트 확정 시 맥미니 서버(공유 재고) 연동 예정. */
@@ -793,7 +772,11 @@ function sndTada(){
 function shoot(zone){
   if(shooting)return;shooting=true;clearZone();hideDots();sndKick();vib(20);
   inst.textContent='슈팅!!! 🍉';
-  let kz;do{kz=Math.floor(Math.random()*9);}while(kz===zone);
+  /* 키퍼는 항상 공과 '다른 가로 코스'로 다이빙 → 같은 쪽인데 골 들어가는 어색함 제거 */
+  const bcol=zone%3;                                   // 0=좌 1=중 2=우
+  const kcol=bcol===0?2 : bcol===2?0 : (Math.random()<.5?0:2);  // 무조건 반대 사이드
+  const krow=Math.floor(Math.random()*3);
+  let kz=krow*3+kcol;
   speedDashes();
   ball.style.transition='transform .07s ease';
   ball.style.transform='translate(-50%,-50%) scale(.9)';
@@ -1104,7 +1087,7 @@ function fillCard(rec,isRevisit){
   document.getElementById('cardMsg').innerHTML=isRevisit
     ?'이미 참여하신 기록이에요.<br>아직 경품을 안 받으셨다면 지금 받아가세요!'
     :'완벽한 슈팅! 오늘 대한민국도 골 폭죽 🇰🇷';
-  document.getElementById('cardHumor').textContent='참가비는 무료지만… 인간적으로 뭐 하나는 사주실 거죠? 🥹🛒';
+  document.getElementById('cardHumor').textContent='아무거나 하나만 사도 참여 가능! 🛒 오늘 장보고 경품 받아가세요';
   const staff=document.getElementById('staffNote');
   const btn=document.getElementById('btn-retry');
   if(UNLIMITED){staff.style.display='none';btn.style.display='block';btn.textContent='한번 더 도전! ⚽';}
