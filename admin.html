@@ -52,12 +52,19 @@
     <div class="mode-label">현재 모드</div>
     <div class="mode" id="modeTxt">…</div>
     <div class="remain">남은 상품 <b id="remainTxt">–</b> 개</div>
+    <div class="remain" style="font-size:.85rem;color:#8fa6c4;margin-top:2px">가득(기준) <b id="baseTxt" style="font-size:1rem;color:#cfe0f5">–</b> 개</div>
     <div class="ext-now" id="extNow"></div>
   </div>
 
   <div class="sec">
-    <h2>① 실전 시작 / 리셋</h2>
-    <p>행사 시작할 때 누르세요. <b>실전 모드</b>로 전환되고 당첨기록이 0부터 시작됩니다. (시트에 등록된 상품 수가 시작 기준)</p>
+    <h2>⓪ 기준 수량 저장 <span style="font-size:.72rem;color:#8fa6c4">(상품 입력 후 1번)</span></h2>
+    <p>실제 상품·수량을 시트에 다 입력한 뒤 누르세요. <b>지금 수량 = '가득' 기준</b>으로 저장되어, 리셋할 때마다 이 수량으로 채워집니다. (상품/수량 바꾸면 다시 누르기)</p>
+    <button class="b-refresh" onclick="doSnapshot()">📸 기준 수량 저장</button>
+  </div>
+
+  <div class="sec">
+    <h2>① 실전 시작 / 리셋 <span style="font-size:.72rem;color:#46d17a">(누를 때마다 적용)</span></h2>
+    <p>누를 때마다 → 재고를 <b>기준 수량으로 가득 채우고</b> · 당첨기록 0 · <b>실전 모드</b> 시작. 사전 시뮬레이션 후 다시 눌러 실전 개시하면 됩니다.</p>
     <button class="b-live" onclick="doReset()">🚀 실전 리셋 · 시작</button>
   </div>
 
@@ -101,6 +108,7 @@ async function load(){
     const mt=document.getElementById('modeTxt');
     mt.textContent=MODE_KO[m]||m; mt.className='mode '+m;
     document.getElementById('remainTxt').textContent=c.remaining;
+    document.getElementById('baseTxt').textContent=(c.baseTotal!=null?c.baseTotal:'–');
     document.getElementById('extNow').textContent=c.extend?('연장 상품: '+(c.extend.emoji||'')+' '+c.extend.name):'';
     const sel=document.getElementById('extSel');
     sel.innerHTML=(c.items||[]).map(it=>`<option value="${it.name.replace(/"/g,'&quot;')}">${it.emoji||''} ${it.name} (${it.grade}, ${it.qty}개)</option>`).join('');
@@ -110,9 +118,13 @@ async function load(){
   }catch(e){ toast('불러오기 실패 — 인터넷 확인',1); }
 }
 
+async function doSnapshot(){
+  if(!confirm('지금 시트의 수량을 "가득 기준"으로 저장합니다.\n실제 상품·수량을 다 입력한 뒤 누르세요. 진행할까요?'))return;
+  try{const d=await api('action=snapshot'); if(d.ok){toast('📸 기준 수량 저장 완료');load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
+}
 async function doReset(){
-  if(!confirm('실전 모드로 전환하고 당첨기록을 0부터 시작합니다.\n행사 시작할 때만 누르세요. 진행할까요?'))return;
-  try{const d=await api('action=reset'); if(d.ok){toast('🚀 실전 시작! 기록 초기화 완료');load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
+  if(!confirm('재고를 기준 수량으로 가득 채우고, 당첨기록을 0부터, 실전 모드로 시작합니다.\n진행할까요?'))return;
+  try{const d=await api('action=reset'); if(d.ok){toast('🚀 실전 시작! 재고 가득·기록 초기화');load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
 }
 async function setMode(m){
   const names={ready:'준비/테스트',live:'실전',extend:'연장'};
