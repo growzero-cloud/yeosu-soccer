@@ -130,6 +130,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   70%{transform:translate(calc(-50% + 8px),-5px) rotate(2.5deg)}
 }
 .keeper svg{width:100%;display:block;overflow:visible}
+.keeper img{width:100%;display:block;pointer-events:none;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 2px #fff) drop-shadow(2px 2px 0 rgba(255,255,255,.9)) drop-shadow(-2px 2px 0 rgba(255,255,255,.9))}
 .keeper .kpupil{transition:transform .15s ease}
 .keeper-shadow{position:absolute;left:50%;bottom:-1%;width:34%;max-width:120px;height:15px;background:rgba(0,0,0,.16);border-radius:50%;transform:translateX(-50%);z-index:3;filter:blur(2px);transition:all .32s ease}
 
@@ -440,35 +441,82 @@ function wmSVG(){
 function keeperSVG(){return `<svg viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="84" cy="223" rx="23" ry="13" fill="#fff" stroke="#2b2b2b" stroke-width="5"/>
   <ellipse cx="136" cy="223" rx="23" ry="13" fill="#fff" stroke="#2b2b2b" stroke-width="5"/>
-  <rect x="72" y="184" width="30" height="42" rx="15" fill="#a06a3a" stroke="#2b2b2b" stroke-width="5"/>
-  <rect x="118" y="184" width="30" height="42" rx="15" fill="#a06a3a" stroke="#2b2b2b" stroke-width="5"/>
-  <path d="M80 142 Q50 120 44 84" fill="none" stroke="#fb8c2a" stroke-width="30" stroke-linecap="round"/>
-  <path d="M140 142 Q170 120 176 84" fill="none" stroke="#fb8c2a" stroke-width="30" stroke-linecap="round"/>
-  <path d="M58 196 Q52 130 70 118 Q110 104 150 118 Q168 130 162 196 Q110 210 58 196 Z" fill="#fb8c2a" stroke="#2b2b2b" stroke-width="5"/>
-  <path d="M70 118 Q110 104 150 118 Q156 132 150 140 Q110 126 70 140 Q64 132 70 118 Z" fill="#ffa94d"/>
-  <text x="110" y="158" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="19" font-weight="900" fill="#fff">여수</text>
-  <text x="110" y="192" text-anchor="middle" font-family="Arial,sans-serif" font-size="34" font-weight="900" fill="#fff" font-style="italic">1</text>
-  <circle cx="42" cy="80" r="24" fill="#fff" stroke="#2b2b2b" stroke-width="5"/>
-  <circle cx="62" cy="92" r="11" fill="#fff" stroke="#2b2b2b" stroke-width="5"/>
-  <circle cx="178" cy="80" r="24" fill="#fff" stroke="#2b2b2b" stroke-width="5"/>
-  <circle cx="158" cy="92" r="11" fill="#fff" stroke="#2b2b2b" stroke-width="5"/>
-  <ellipse cx="66" cy="36" rx="17" ry="21" fill="#f7d9a8" stroke="#2b2b2b" stroke-width="5" transform="rotate(-18 66 36)"/>
-  <ellipse cx="154" cy="36" rx="17" ry="21" fill="#f7d9a8" stroke="#2b2b2b" stroke-width="5" transform="rotate(18 154 36)"/>
-  <ellipse cx="66" cy="38" rx="8" ry="11" fill="#e0a866" transform="rotate(-18 66 38)"/>
-  <ellipse cx="154" cy="38" rx="8" ry="11" fill="#e0a866" transform="rotate(18 154 38)"/>
-  <circle cx="110" cy="80" r="56" fill="#f7d9a8" stroke="#2b2b2b" stroke-width="5"/>
-  <path d="M92 30 q6 -18 16 -4 q8 -16 16 -2 q10 -8 6 10" fill="#f7d9a8" stroke="#2b2b2b" stroke-width="5" stroke-linejoin="round"/>
-  <ellipse cx="110" cy="96" rx="32" ry="24" fill="#fdeecb"/>
-  <ellipse cx="74" cy="94" rx="11" ry="7" fill="#ff9d8a" opacity=".5"/>
-  <ellipse cx="146" cy="94" rx="11" ry="7" fill="#ff9d8a" opacity=".5"/>
-  <g class="kpupil"><circle cx="88" cy="78" r="7.5" fill="#2b2b2b"/><circle cx="90.5" cy="75" r="2.4" fill="#fff"/></g>
-  <g class="kpupil"><circle cx="132" cy="78" r="7.5" fill="#2b2b2b"/><circle cx="134.5" cy="75" r="2.4" fill="#fff"/></g>
-  <path d="M78 64 q10 -5 20 -1" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M122 63 q10 -4 20 1" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <ellipse cx="110" cy="92" rx="6" ry="4.5" fill="#2b2b2b"/>
-  <path d="M110 96 L110 102" stroke="#2b2b2b" stroke-width="3.5" stroke-linecap="round"/>
-  <path class="kSmile" d="M96 104 q14 14 28 0" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path class="kSad" d="M97 110 q13 -11 26 0" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round" style="display:none"/>
+  <rect x="74" y="182" width="30" height="46" rx="13" fill="#2f3136" stroke="#1b1c1f" stroke-width="5"/>
+  <rect x="116" y="182" width="30" height="46" rx="13" fill="#2f3136" stroke="#1b1c1f" stroke-width="5"/>
+  <!-- 팔: 검정 반팔 소매 + 맨 팔뚝 -->
+  <path d="M84 134 Q66 118 56 104" fill="none" stroke="#1b1c1f" stroke-width="30" stroke-linecap="round"/>
+  <path d="M136 134 Q154 118 164 104" fill="none" stroke="#1b1c1f" stroke-width="30" stroke-linecap="round"/>
+  <path d="M84 134 Q66 118 56 104" fill="none" stroke="#37393f" stroke-width="24" stroke-linecap="round"/>
+  <path d="M136 134 Q154 118 164 104" fill="none" stroke="#37393f" stroke-width="24" stroke-linecap="round"/>
+  <path d="M56 104 Q48 94 40 82" fill="none" stroke="#2b2b2b" stroke-width="22" stroke-linecap="round"/>
+  <path d="M164 104 Q172 94 180 82" fill="none" stroke="#2b2b2b" stroke-width="22" stroke-linecap="round"/>
+  <path d="M56 104 Q48 94 40 82" fill="none" stroke="#f0c89a" stroke-width="15" stroke-linecap="round"/>
+  <path d="M164 104 Q172 94 180 82" fill="none" stroke="#f0c89a" stroke-width="15" stroke-linecap="round"/>
+  <!-- 검정 티셔츠 -->
+  <path d="M58 196 Q52 130 70 118 Q110 104 150 118 Q168 130 162 196 Q110 210 58 196 Z" fill="#37393f" stroke="#2b2b2b" stroke-width="5"/>
+  <path d="M92 119 q18 12 36 0" stroke="#26282d" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- 마트 네이비 조끼 -->
+  <path d="M62 197 Q55 133 72 120 Q89 112 106 117 L106 200 Q83 202 62 197 Z" fill="#2a3f63" stroke="#152340" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M158 197 Q165 133 148 120 Q131 112 114 117 L114 200 Q137 202 158 197 Z" fill="#2a3f63" stroke="#152340" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M73 123 Q89 116 104 120 L104 132 Q89 127 75 134 Z" fill="#3a5688" opacity=".5"/>
+  <path d="M147 123 Q131 116 116 120 L116 132 Q131 127 145 134 Z" fill="#3a5688" opacity=".5"/>
+  <path d="M106 117 L93 120 101 131 106 126 Z" fill="#21314e" stroke="#152340" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M114 117 L127 120 119 131 114 126 Z" fill="#21314e" stroke="#152340" stroke-width="3.5" stroke-linejoin="round"/>
+  <line x1="110" y1="120" x2="110" y2="198" stroke="#16243e" stroke-width="3.5"/>
+  <circle cx="110" cy="154" r="3.6" fill="#cdd6e2" stroke="#16243e" stroke-width="2"/>
+  <!-- 카고 주머니 -->
+  <path d="M122 150 h26 v15 q0 4 -4 4 h-18 q-4 0 -4 -4 z" fill="#243a5d" stroke="#16243e" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M70 174 h28 v16 q0 4 -4 4 h-20 q-4 0 -4 -4 z" fill="#243a5d" stroke="#16243e" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M122 174 h28 v16 q0 4 -4 4 h-20 q-4 0 -4 -4 z" fill="#243a5d" stroke="#16243e" stroke-width="3.5" stroke-linejoin="round"/>
+  <!-- 마트 이름표 -->
+  <rect x="70" y="150" width="36" height="16" rx="4" fill="#fb8c2a" stroke="#16243e" stroke-width="3"/>
+  <text x="88" y="162.5" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" font-weight="900" fill="#fff">여수</text>
+  <!-- 목 -->
+  <path d="M99 118 l1 -13 20 0 1 13 q-11 7 -22 0 z" fill="#f0c89a" stroke="#2b2b2b" stroke-width="4.5" stroke-linejoin="round"/>
+  <!-- 귀 -->
+  <ellipse cx="66" cy="78" rx="9" ry="13" fill="#f0c89a" stroke="#2b2b2b" stroke-width="5"/>
+  <ellipse cx="154" cy="78" rx="9" ry="13" fill="#f0c89a" stroke="#2b2b2b" stroke-width="5"/>
+  <!-- 얼굴 -->
+  <ellipse cx="110" cy="76" rx="46" ry="48" fill="#f0c89a" stroke="#2b2b2b" stroke-width="5"/>
+  <!-- 짧은 머리 (옆가르마) -->
+  <path d="M64 74 Q58 32 100 27 Q142 24 156 56 Q158 70 154 78 Q149 56 130 50 Q117 45 107 53 Q98 44 88 50 Q72 56 68 78 Q65 76 64 74 Z" fill="#23201d" stroke="#1c1a17" stroke-width="4.5" stroke-linejoin="round"/>
+  <path d="M68 60 Q63 72 66 82" stroke="#23201d" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M152 60 Q157 72 154 82" stroke="#23201d" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <!-- 눈썹 (다부지게) -->
+  <path d="M84 61 Q94 56 105 61" stroke="#2b2b2b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M115 61 Q126 56 136 61" stroke="#2b2b2b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- 눈 (흰자 + 눈동자) -->
+  <ellipse cx="96" cy="77" rx="8" ry="6.5" fill="#fff" stroke="#2b2b2b" stroke-width="2.5"/>
+  <ellipse cx="124" cy="77" rx="8" ry="6.5" fill="#fff" stroke="#2b2b2b" stroke-width="2.5"/>
+  <g class="kpupil"><circle cx="97" cy="78" r="4.3" fill="#2b2b2b"/><circle cx="98.5" cy="76" r="1.5" fill="#fff"/></g>
+  <g class="kpupil"><circle cx="125" cy="78" r="4.3" fill="#2b2b2b"/><circle cx="126.5" cy="76" r="1.5" fill="#fff"/></g>
+  <!-- 코 -->
+  <path d="M109 79 q6 10 -1 14 q-3 1 -6 -1" fill="none" stroke="#d8a878" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 입 -->
+  <path class="kSmile" d="M99 100 q11 6 22 0" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path class="kSad" d="M100 105 q11 -8 22 0" stroke="#2b2b2b" stroke-width="4" fill="none" stroke-linecap="round" style="display:none"/>
+  <!-- 고무장갑 (왼손) -->
+  <g transform="translate(38,82) rotate(-30)">
+    <rect x="-15" y="-50" width="9" height="20" rx="4.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5"/>
+    <rect x="-5" y="-54" width="9" height="24" rx="4.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5"/>
+    <rect x="5" y="-51" width="9" height="21" rx="4.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5"/>
+    <ellipse cx="-16" cy="-22" rx="7.5" ry="10.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5" transform="rotate(-26 -16 -22)"/>
+    <rect x="-16" y="-36" width="32" height="40" rx="13" fill="#e8443a" stroke="#2b2b2b" stroke-width="5"/>
+    <ellipse cx="-5" cy="-22" rx="5" ry="12" fill="#fff" opacity=".22" transform="rotate(-12 -5 -22)"/>
+    <path d="M-17 0 L17 0 L23 18 L-23 18 Z" fill="#c9352c" stroke="#2b2b2b" stroke-width="5" stroke-linejoin="round"/>
+    <ellipse cx="0" cy="18" rx="23" ry="6.5" fill="#b82e26" stroke="#2b2b2b" stroke-width="4.5"/>
+  </g>
+  <!-- 고무장갑 (오른손, 미러) -->
+  <g transform="translate(220,0) scale(-1,1)"><g transform="translate(38,82) rotate(-30)">
+    <rect x="-15" y="-50" width="9" height="20" rx="4.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5"/>
+    <rect x="-5" y="-54" width="9" height="24" rx="4.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5"/>
+    <rect x="5" y="-51" width="9" height="21" rx="4.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5"/>
+    <ellipse cx="-16" cy="-22" rx="7.5" ry="10.5" fill="#e8443a" stroke="#2b2b2b" stroke-width="4.5" transform="rotate(-26 -16 -22)"/>
+    <rect x="-16" y="-36" width="32" height="40" rx="13" fill="#e8443a" stroke="#2b2b2b" stroke-width="5"/>
+    <ellipse cx="-5" cy="-22" rx="5" ry="12" fill="#fff" opacity=".22" transform="rotate(-12 -5 -22)"/>
+    <path d="M-17 0 L17 0 L23 18 L-23 18 Z" fill="#c9352c" stroke="#2b2b2b" stroke-width="5" stroke-linejoin="round"/>
+    <ellipse cx="0" cy="18" rx="23" ry="6.5" fill="#b82e26" stroke="#2b2b2b" stroke-width="4.5"/>
+  </g></g>
 </svg>`;}
 
 /* ───────── Scene decorations ───────── */
@@ -536,7 +584,7 @@ const aimInner=document.getElementById('aimInner');
 for(let i=0;i<9;i++){const d=document.createElement('div');d.className='az';d.dataset.z=i;aimInner.appendChild(d);}
 document.getElementById('hudball').innerHTML=wmSVG();
 document.getElementById('ball').innerHTML=wmSVG();
-document.getElementById('keeper').innerHTML=keeperSVG();
+document.getElementById('keeper').innerHTML='<img src="jangjangnim.png" alt="점장님 골키퍼" draggable="false">';
 (function(){
   const root=document.getElementById('startIllust');
   [[20,20,40,8,20],[60,30,30,7,-30],[80,55,46,8,15],[35,60,34,7,-20],[70,12,28,6,40],[15,45,30,7,10]].forEach(([x,y,w,h,r])=>{
@@ -544,7 +592,7 @@ document.getElementById('keeper').innerHTML=keeperSVG();
     d.style.cssText=`left:${x}%;top:${y}%;width:${w}px;height:${h}px;transform:rotate(${r}deg)`;root.appendChild(d);
   });
   const b=document.createElement('div');b.className='si-ball';b.innerHTML=wmSVG();root.appendChild(b);
-  const k=document.createElement('div');k.className='si-keeper';k.innerHTML=keeperSVG();root.appendChild(k);
+  const k=document.createElement('div');k.className='si-keeper';k.innerHTML='<img src="jangjangnim.png" alt="점장님" draggable="false" style="width:100%;display:block">';root.appendChild(k);
   [['🥩',6,8,1.9],['🍅',30,16,1.5],['🦑',55,6,1.7],['🥒',5,62,1.5],['🍚',38,44,1.4],['🍄',84,16,1.3]].forEach(([ch,x,y,sz],i)=>{
     const g=document.createElement('div');g.className='fgro';g.textContent=ch;
     g.style.cssText=`left:${x}%;top:${y}%;font-size:${sz}rem;animation-delay:${i*.4}s`;
