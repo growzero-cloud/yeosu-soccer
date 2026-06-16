@@ -89,7 +89,7 @@
   <div class="toast" id="toast"></div>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbxI2NsPnN6hQ5Gq_mgZKkZJp1Yb9Fgtp29d3LcYvjnFcfn4TizLi7m8BTWdPpGJ6vLM/exec';
+const API='https://yeosu-goal-server.growzero-cloud.deno.net'; /* Deno Deploy + KV (구 Apps Script 대체) */
 let KEY=new URLSearchParams(location.search).get('k')||localStorage.getItem('ohp_admin_key')||'';
 const MODE_KO={ready:'준비 / 테스트',live:'실전 진행중',extend:'연장 중'};
 

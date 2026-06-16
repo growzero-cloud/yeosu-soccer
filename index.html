@@ -623,7 +623,7 @@ const TEST=/[?&]test/.test(location.search);
 if(TEST){try{localStorage.removeItem(PKEY);}catch(e){}}
 
 /* 공유 재고 서버 */
-const PRIZE_API='https://script.google.com/macros/s/AKfycbxI2NsPnN6hQ5Gq_mgZKkZJp1Yb9Fgtp29d3LcYvjnFcfn4TizLi7m8BTWdPpGJ6vLM/exec';
+const PRIZE_API='https://yeosu-goal-server.growzero-cloud.deno.net'; /* Deno Deploy + KV: 추첨 ~0.5초(구 Apps Script 2~8초 대체) */
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function drawServer(){
   for(let i=0;i<2;i++){
@@ -631,7 +631,10 @@ async function drawServer(){
   }
   return null;
 }
+function warmup(){if(!TEST){try{fetch(PRIZE_API+'?action=status',{cache:'no-store'}).catch(()=>{});}catch(e){}}} /* Apps Script 콜드스타트 예열: 미리 인스턴스 깨워 슛 때 추첨이 빠르게 끝나게 */
+warmup();
 let LOCKED=false;
+let drawP=null; /* 미리 받아둔 추첨 promise: 골은 100%라 슛 순간 호출 → 공 날아가는 동안 네트워크 끝나 체감 지연 제거 */
 function getRec(){try{return JSON.parse(localStorage.getItem(PKEY)||'null');}catch(e){return null;}}
 function fmtT(ts){const d=new Date(ts);const p=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`;}
 function mkCode(){return Math.random().toString(36).slice(2,6).toUpperCase();}
@@ -783,7 +786,7 @@ function sndCheer(){try{
   g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
   src.connect(f);f.connect(g);g.connect(actx.destination);src.start();
 }catch(e){}}
-function sndDrum(){for(let i=0;i<16;i++)setTimeout(()=>tick(.22,1100),i*46);}
+function sndDrum(){let t=0,dt=130;for(let i=0;i<30;i++){setTimeout(()=>tick(.22,1100),t);t+=dt;dt=Math.max(40,dt*0.92);}} /* ~1.8초 가속 드럼롤(2초 서스펜스 채움) */
 function sndBoom(){beep(70,.5,'sine',.95);tick(.5,300);}
 function sndThud(){beep(85,.14,'sine',.7);tick(.25,420);}
 function sndSplat(){beep(150,.2,'sine',.6);tick(.45,600);tick(.3,1300);}
@@ -795,6 +798,7 @@ function sndTada(){
 /* ───────── Shoot — 골 100% ───────── */
 function shoot(zone){
   if(shooting)return;shooting=true;clearZone();hideDots();sndKick();vib(20);
+  if(!TEST)drawP=drawServer();   /* prefetch: 슛과 동시에 추첨 시작 → 도착 전 응답 완료 */
   inst.textContent='슈팅!!! 🍉';
   /* 키퍼는 항상 공과 '다른 가로 코스'로 다이빙 → 같은 쪽인데 골 들어가는 어색함 제거 */
   const bcol=zone%3;                                   // 0=좌 1=중 2=우
@@ -807,7 +811,7 @@ function shoot(zone){
   setTimeout(()=>{
     dive(kz);
     flyBall(zone);
-    setTimeout(()=>result(zone),2050); /* 폭발+키퍼 후회까지 보고 대공개 */
+    setTimeout(()=>result(zone),1600); /* 폭발+키퍼 후회 잠깐 보고 바로 대공개 */
   },70);
 }
 
@@ -1099,7 +1103,8 @@ async function result(zone){
     await sleep(760);
     const p=drawPrize(); rec={e:p.e,n:p.n,g:p.g,tier:p.tier||1,t:Date.now(),c:mkCode()};
   }else{
-    const d=await drawServer();
+    const [d]=await Promise.all([drawP||drawServer(), sleep(2000)]); /* prefetch 추첨 + 링 서스펜스 2초: 공 날아가는 동안 추첨 끝나 보통 딱 2초에 공개(서버 대기 X) */
+    drawP=null;
     if(!d) state='err';
     else if(d.soldout) state='sold';
     else { rec={e:d.emoji,n:d.name,g:d.grade,tier:Number(d.tier)||1,t:Date.now(),c:d.code}; lock=!!d.lock; }
