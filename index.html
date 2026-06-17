@@ -190,14 +190,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 #goalText{
   position:absolute;top:24%;left:50%;transform:translate(-50%,-50%) skewX(-7deg) scale(.4);
   font-family:'Arial Black','Arial',sans-serif;font-style:italic;font-weight:900;
-  font-size:4.6rem;z-index:40;opacity:0;pointer-events:none;white-space:nowrap;
+  font-size:clamp(3.2rem,16vw,5.2rem);z-index:40;opacity:0;pointer-events:none;white-space:nowrap;
   background:linear-gradient(180deg,#fff 0%,#ffe27a 45%,#f59f00 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   -webkit-text-stroke:2.5px var(--ink);
   filter:drop-shadow(0 6px 0 rgba(0,0,0,.18));
 }
 #goalText.show{animation:goalPop .5s cubic-bezier(.2,1.4,.4,1) forwards}
-@keyframes goalPop{0%{opacity:0;transform:translate(-50%,-50%) skewX(-7deg) scale(.3) rotate(-6deg)}60%{opacity:1;transform:translate(-50%,-50%) skewX(-7deg) scale(1.14) rotate(2deg)}100%{opacity:.94;transform:translate(-50%,-50%) skewX(-7deg) scale(1) rotate(0)}}
+@keyframes goalPop{0%{opacity:0;transform:translate(-50%,-50%) skewX(-7deg) scale(.28) rotate(-8deg)}55%{opacity:1;transform:translate(-50%,-50%) skewX(-7deg) scale(1.26) rotate(3deg)}75%{transform:translate(-50%,-50%) skewX(-7deg) scale(.96) rotate(-1deg)}100%{opacity:.96;transform:translate(-50%,-50%) skewX(-7deg) scale(1.05) rotate(0)}}
 
 .emote{position:absolute;font-size:1.6rem;z-index:9;pointer-events:none;opacity:0}
 .emote.show{animation:emoteUp 1s ease forwards}
@@ -283,9 +283,42 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 
 @keyframes shake{0%,100%{transform:none}20%{transform:translate(-5px,2px)}40%{transform:translate(5px,-2px)}60%{transform:translate(-4px,3px)}80%{transform:translate(4px,-1px)}}
 .stage.shake{animation:shake .35s ease}
-@keyframes punchShake{0%,100%{transform:none}15%{transform:translate(-4px,2px) scale(1.03)}35%{transform:translate(5px,-2px) scale(1.035)}55%{transform:translate(-4px,3px) scale(1.02)}80%{transform:translate(3px,-1px) scale(1.008)}}
-.stage.punch{animation:punchShake .42s ease}
-@keyframes netS{0%,100%{transform:none}25%{transform:translateY(4px)}50%{transform:translateY(-2px)}75%{transform:translateY(3px)}}
+/* 흔들림 강화(체감↑) */
+@keyframes punchShake{0%,100%{transform:none}12%{transform:translate(-9px,4px) scale(1.045)}30%{transform:translate(10px,-5px) scale(1.05)}50%{transform:translate(-8px,5px) scale(1.035)}70%{transform:translate(6px,-3px) scale(1.02)}88%{transform:translate(-3px,1px) scale(1.01)}}
+.stage.punch{animation:punchShake .46s cubic-bezier(.36,.07,.19,.97)}
+@keyframes netS{0%,100%{transform:none}20%{transform:translateY(8px)}45%{transform:translateY(-4px)}70%{transform:translateY(5px)}}
+
+/* ════ 시네마틱 슛 연출 (A) ════ */
+.stage{transition:transform .52s cubic-bezier(.28,.7,.18,1)}
+.stage.zoom{transform:scale(1.075);transform-origin:50% 27%}
+#vignette{position:fixed;inset:0;z-index:38;pointer-events:none;opacity:0;transition:opacity .32s ease;
+  background:radial-gradient(ellipse 72% 62% at 50% 30%,transparent 34%,rgba(8,4,20,.30) 78%,rgba(8,4,20,.62) 100%)}
+#vignette.on{opacity:1}
+
+/* ════ 골 충격파 링 (B) ════ */
+.shock{position:fixed;border-radius:50%;border:5px solid rgba(255,255,255,.92);pointer-events:none;z-index:47;
+  transform:translate(-50%,-50%) scale(.2);opacity:.95;animation:shockOut .56s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes shockOut{0%{transform:translate(-50%,-50%) scale(.2);opacity:.95}100%{transform:translate(-50%,-50%) scale(3.6);opacity:0}}
+.shock.gold{border-color:rgba(255,214,80,.95);box-shadow:0 0 26px rgba(255,200,60,.75)}
+
+/* ════ 경품 공개 등급 연출 (C) ════ */
+.rv-banner{position:absolute;top:8%;left:0;right:0;text-align:center;z-index:3;opacity:0;pointer-events:none}
+.rv-banner span{display:inline-block;padding:9px 28px;border-radius:100px;font-size:1.08rem;font-weight:900;letter-spacing:.03em;
+  background:linear-gradient(180deg,#ffe27a,#f59f00);color:#5b3d00;box-shadow:0 7px 22px rgba(245,159,0,.6),inset 0 0 0 2px rgba(255,255,255,.5)}
+.rv-banner.tier2 span{background:linear-gradient(180deg,#cdebff,#5aa8e0);color:#072f4d;box-shadow:0 7px 20px rgba(70,140,210,.5),inset 0 0 0 2px rgba(255,255,255,.55)}
+.rv-banner.show{animation:bannerIn .5s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes bannerIn{0%{opacity:0;transform:translateY(-20px) scale(.78)}100%{opacity:1;transform:translateY(0) scale(1)}}
+#reveal.gold{background:radial-gradient(circle at 50% 42%,rgba(122,82,12,.93) 0%,rgba(40,22,4,.97) 78%)}
+#reveal.gold .rv-rays{background:repeating-conic-gradient(rgba(255,210,70,.30) 0 10deg,transparent 10deg 22deg)}
+.rv-emoji .rimg{transition:width .3s ease,height .3s ease}
+.rv-emoji.gold .rimg{box-shadow:0 12px 34px rgba(0,0,0,.5),0 0 38px rgba(255,205,70,.85),0 0 70px rgba(255,180,40,.4)!important}
+
+/* ════ 저사양/접근성 대응 ════ */
+@media (prefers-reduced-motion:reduce){
+  .stage.zoom{transform:none}
+  #vignette{display:none}
+  .stage.punch,.stage.shake,#reveal.shakeit,.shock{animation-duration:.2s}
+}
 </style>
 </head>
 <body>
@@ -382,7 +415,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
     <div class="ball glow" id="ball"></div>
 
     <div id="beam"></div>
-    <div id="goalText">GOAL!</div>
+    <div id="goalText">GOOOAL!</div>
     <div class="emote" id="emote">💦</div>
 
     <div class="inst" id="inst">수박을 아래로 쭉~ 당겼다 놓으면 슛! 🍉</div>
@@ -394,6 +427,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 <div id="reveal">
   <div class="rv-rays"></div>
   <div class="rv-label" id="rvLabel">🎁 오늘의 경품은 🎁</div>
+  <div class="rv-banner" id="rvBanner"><span></span></div>
   <div class="rv-ring" id="rvRing"></div>
   <div class="rv-emoji" id="rvEmoji">🎁</div>
   <div class="rv-name" id="rvName"></div>
@@ -423,6 +457,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
 </div>
 
 <div id="flash"></div>
+<div id="vignette"></div>
 <div id="confetti"></div>
 
 <script>
@@ -595,21 +630,34 @@ document.getElementById('ball').innerHTML=wmSVG();
 document.getElementById('keeper').innerHTML='<img src="jangjangnim.png" alt="점장님 골키퍼" draggable="false">';
 /* 시작화면은 포스터 이미지(start_poster.jpg)로 대체 — 별도 일러스트 생성 없음 */
 
-/* ───────── Prize pool (예시 구성) ─────────
-   TODO: 실제 1500개 상품 리스트 확정 시 맥미니 서버(공유 재고) 연동 예정. */
-const PRIZES=[
-  {e:'🍉',n:'수박 한 통',      g:'특급 경품',tier:3,w:2},
-  {e:'🥩',n:'한우 사골세트',    g:'특급 경품',tier:3,w:1},
-  {e:'🥔',n:'감자 한 박스',     g:'특급 경품',tier:3,w:1},
-  {e:'🥓',n:'삼겹살 한 팩',     g:'우수 경품',tier:2,w:6},
-  {e:'🦑',n:'오징어 한 마리',   g:'우수 경품',tier:2,w:8},
-  {e:'🍚',n:'햇반 세트',        g:'우수 경품',tier:2,w:6},
-  {e:'🍅',n:'방울토마토 500g', g:'경품',tier:1,w:18},
-  {e:'🥒',n:'애호박 1개',       g:'경품',tier:1,w:18},
-  {e:'🍄',n:'팽이버섯 1봉',     g:'경품',tier:1,w:18},
-  {e:'🌶️',n:'고추 150g',       g:'경품',tier:1,w:12},
-  {e:'🧄',n:'깐마늘 한 팩',     g:'경품',tier:1,w:10},
+/* ───────── Prize pool ─────────
+   서버(deno-server.ts)의 SEED와 100% 동일 — 테스트(?test=1)도 실전과 같은 64품목·같은 확률.
+   [상품명, 이모지, 등급, 연출tier(1~3), 수량(=가중치)] — 수량 많을수록 잘 뽑힘. 총 1,859개. */
+const PRIZE_SEED=[
+  ["봉황뜰미쌀 20KG","🌾","최고급",3,1],["한우 사골세트","🦴","최고급",3,5],["한우 우족세트","🍖","최고급",3,5],
+  ["선풍기","🌀","최고급",3,1],["수박 8kg","🍉","최고급",3,20],["햇무 1박스","🥬","특급",3,5],
+  ["삼양라면 1박스","🍜","특급",3,2],["햇반 10입","🍚","특급",3,6],["한돈 간장불고기 500g","🥓","특급",3,35],
+  ["한돈 찌개용 400g","🥩","특급",3,35],["동태","🐟","우수",2,100],["특란 30구","🥚","우수",2,10],
+  ["맥심 커피 210입","☕","우수",2,2],["순수프리미엄 화장지 30롤","🧻","우수",2,3],["깨끗한나라 화장지 30롤","🧻","우수",2,3],
+  ["핸드타올 1박스","🧻","우수",2,1],["테이블냅킨 100밴드","🧻","우수",2,1],["테이블냅킨 60밴드","🧻","우수",2,1],
+  ["다우니 1L","🧴","우수",2,12],["바디워스","🧴","우수",2,9],["여수막걸리","🍶","우수",2,20],
+  ["개도막걸리","🍶","우수",2,20],["동원 우유 1L","🥛","우수",2,16],["푸르밀 우유 1L","🥛","우수",2,16],
+  ["남양 우유 1L","🥛","우수",2,16],["물만두 1.35kg","🥟","우수",2,6],["군만두 1.4kg","🥟","우수",2,6],
+  ["고기만두 168g","🥟","우수",2,30],["김치만두 168g","🥟","우수",2,30],["평양물냉면 900g","🍜","우수",2,12],
+  ["냉동육개장 700g","🍲","우수",2,50],["황태해장국","🍲","우수",2,50],["누룽지 3kg","🍚","우수",2,3],
+  ["월드컵 깡치포 150g","🐟","우수",2,35],["회초장 650g","🦐","우수",2,35],["로제열라면 4입","🍜","우수",2,8],
+  ["청양고추 1kg","🌶️","일반",1,30],["꿀고구마 1kg","🍠","일반",1,50],["수미감자 2kg","🥔","일반",1,50],
+  ["취청오이 5개","🥒","일반",1,100],["대파 1단","🌿","일반",1,50],["국산 흙당근 1kg","🥕","일반",1,50],
+  ["햇양파 1kg","🧅","일반",1,100],["방울토마토 500g","🍅","일반",1,200],["갈배쥬스 1.5L","🧃","일반",1,10],
+  ["델몬트 매실 1.5L","🥤","일반",1,10],["815콜라 1.5L","🥤","일반",1,10],["환타 파인 1.5L","🥤","일반",1,20],
+  ["로얄크랩 디핑소스","🦀","일반",1,20],["프링글스","🥔","일반",1,24],["망고킥 과자","🥭","일반",1,10],
+  ["꼬북칩","🐢","일반",1,10],["콘칩","🌽","일반",1,10],["소라번들 과자","🐚","일반",1,9],
+  ["올리브김 16입","🍙","일반",1,10],["쌀과자","🍘","일반",1,18],["보리 1kg","🌾","일반",1,10],
+  ["하루귀리 음료","🥤","일반",1,20],["고깔콘","🌽","일반",1,10],["장아찌간장 1.8L","🍶","일반",1,8],
+  ["홍게간장 1.8L","🦀","일반",1,8],["수세미","🧽","일반",1,200],["위생장갑","🧤","일반",1,200],
+  ["접이식의자","🪑","일반",1,2],
 ];
+const PRIZES=PRIZE_SEED.map(([n,e,g,tier,w])=>({e,n,g,tier,w}));
 function drawPrize(){const tot=PRIZES.reduce((s,p)=>s+p.w,0);let r=Math.random()*tot;for(const p of PRIZES){r-=p.w;if(r<0)return p;}return PRIZES[PRIZES.length-1];}
 
 /* ═══════════ 운영 모드 ═══════════
@@ -662,6 +710,7 @@ const dim=document.getElementById('dim');
 const flashEl=document.getElementById('flash');
 const confEl=document.getElementById('confetti');
 const reveal=document.getElementById('reveal');
+const vignetteEl=document.getElementById('vignette');
 const azCells=document.querySelectorAll('.az');
 
 let shooting=false,actx=null,curDiveZone=4,curZ=-1;
@@ -799,6 +848,7 @@ function sndTada(){
 /* ───────── Shoot — 골 100% ───────── */
 function shoot(zone){
   if(shooting)return;shooting=true;clearZone();hideDots();sndKick();vib(20);
+  stage.classList.add('zoom');vignetteEl.classList.add('on');   /* 시네마틱 줌인 + 비네트 (A) */
   if(!TEST)drawP=drawServer();   /* prefetch: 슛과 동시에 추첨 시작 → 도착 전 응답 완료 */
   inst.textContent='슈팅!!! 🍉';
   /* 키퍼는 항상 공과 '다른 가로 코스'로 다이빙 → 같은 쪽인데 골 들어가는 어색함 제거 */
@@ -845,11 +895,11 @@ function flyBall(zone){
   ball.style.opacity='0';
   const dx=tpx-sx2,dy=tpy-sy2,groundY=sy2;
 
-  const dur=560,arc=Math.min(70,Math.abs(dy)*.3+38),t0=performance.now();
+  const dur=660,arc=Math.min(70,Math.abs(dy)*.3+38),t0=performance.now();  /* 살짝 늘려 슬로모션 체감 (A) */
   let fr=0;
   (function step(t){
     const p=Math.min((t-t0)/dur,1);
-    const px=1-Math.pow(1-p,1.9),py=1-Math.pow(1-p,1.7);
+    const px=1-Math.pow(1-p,2.4),py=1-Math.pow(1-p,2.1);  /* 골 직전 감속 강화 */
     const h=arc*Math.sin(Math.PI*p);
     const cx=sx2+dx*px,cy=sy2+dy*py-h;
     g.style.left=cx+'px';g.style.top=cy+'px';
@@ -975,10 +1025,11 @@ function dustAtKeeper(){
 /* 골 임팩트: 과즙 폭발 + 펀치 흔들림 + 군중 하이프 + 키퍼 후회 */
 function goalImpact(zone){
   netImpactAt(zone);
-  stage.classList.add('punch');setTimeout(()=>stage.classList.remove('punch'),440);
+  shockwaveAt(zone);setTimeout(()=>shockwaveAt(zone,true),95);   /* 충격파 링 2겹 (B) */
+  stage.classList.add('punch');setTimeout(()=>stage.classList.remove('punch'),470);
   burst(zone,['#ff5a5a','#ff8787','#FFD700','#4cbf55','#FFF176','#fff']);
   seedBurst(zone);
-  flashGold();sndGoal();sndCheer();vib([20,40,80]);
+  flashGold();sndGoal();sndCheer();vib([30,50,120]);
   goalText.classList.add('show');
   sky.classList.add('hype');
   keeperFace(false);
@@ -1013,6 +1064,14 @@ function netImpactAt(zone){
   setTimeout(()=>document.getElementById('goalsvg').style.animation='',460);
 }
 
+/* 골 충격파 링 (B) */
+function shockwaveAt(zone,gold){
+  const[cx,cy]=zonePoint(zone);
+  const el=document.createElement('div');el.className='shock'+(gold?' gold':'');
+  el.style.cssText+=`left:${cx}px;top:${cy}px;width:74px;height:74px`;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),600);
+}
+
 function flashGold(){
   flashEl.style.cssText='position:fixed;inset:0;z-index:50;pointer-events:none;background:rgba(255,245,120,.85)';
   flashEl.style.animation='none';requestAnimationFrame(()=>flashEl.style.animation='flashOut .32s ease-out forwards');
@@ -1041,13 +1100,13 @@ function seedBurst(zone){
 function speedDashes(){
   const r=ball.getBoundingClientRect();
   const cx=r.left+r.width/2,cy=r.top+r.height/2;
-  for(let i=0;i<5;i++){
+  for(let i=0;i<9;i++){                                 /* 속도선 강화: 더 많고 더 길게 (A) */
     const el=document.createElement('div');el.className='sdash';
-    const w=14+Math.random()*16;
-    el.style.cssText=`position:fixed;left:${cx}px;top:${cy+ (i-2)*9}px;width:${w}px;height:5px;z-index:8;background:#fff;border-radius:100px;opacity:.85`;
+    const w=22+Math.random()*30;
+    el.style.cssText=`position:fixed;left:${cx}px;top:${cy+ (i-4)*8}px;width:${w}px;height:${4+Math.random()*2}px;z-index:8;background:#fff;border-radius:100px;opacity:${.6+Math.random()*.35}`;
     document.body.appendChild(el);
-    requestAnimationFrame(()=>{el.style.transition='all .3s ease-out';el.style.left=(cx-50-Math.random()*30)+'px';el.style.opacity='0';});
-    setTimeout(()=>el.remove(),340);
+    requestAnimationFrame(()=>{el.style.transition='all .34s ease-out';el.style.left=(cx-80-Math.random()*60)+'px';el.style.opacity='0';});
+    setTimeout(()=>el.remove(),380);
   }
 }
 
@@ -1058,6 +1117,9 @@ const $rv=id=>document.getElementById(id);
 /* 추첨 서스펜스 시작: 오버레이 + 드럼롤 (서버 응답 기다리는 동안 시간 벌기) */
 function revealStart(){
   rvTimers.forEach(clearTimeout);rvTimers=[];
+  stage.classList.remove('zoom');vignetteEl.classList.remove('on');   /* 줌/비네트 해제 — 오버레이로 전환 (A) */
+  reveal.classList.remove('gold');                                    /* 등급 연출 초기화 (C) */
+  const rvB=$rv('rvBanner');rvB.className='rv-banner';rvB.firstElementChild.textContent='';
   const rvE=$rv('rvEmoji'),rvN=$rv('rvName'),rvG=$rv('rvGrade'),rvL=$rv('rvLabel'),rvR=$rv('rvRing');
   rvE.className='rv-emoji';rvN.className='rv-name';rvG.className='rv-grade';rvL.className='rv-label';rvR.className='rv-ring';
   rvE.textContent='🎁';rvN.textContent='';rvG.textContent='';rvL.textContent='🎁 오늘의 경품은… 🎁';
@@ -1071,24 +1133,33 @@ function revealStart(){
 /* 등급(tier)별 화려함 차등으로 경품 공개. tier 3=초화려, 2=화려, 1=기본 */
 function revealReveal(rec,done){
   rvDone=done;
-  const rvE=$rv('rvEmoji'),rvN=$rv('rvName'),rvG=$rv('rvGrade'),rvR=$rv('rvRing');
+  const rvE=$rv('rvEmoji'),rvN=$rv('rvName'),rvG=$rv('rvGrade'),rvR=$rv('rvRing'),rvB=$rv('rvBanner');
   const tier=rec.tier||1;
   const T=(fn,ms)=>rvTimers.push(setTimeout(fn,ms));
   rvE.classList.add('slam');rvR.classList.add('go');
-  rvE.innerHTML='';var _rim=new Image();
-  _rim.style.cssText='width:172px;height:172px;object-fit:contain;background:#fff;border-radius:16px;padding:8px;box-shadow:0 10px 26px rgba(0,0,0,.45);display:block';
+  /* 등급별: 최고급/특급=금빛 배경+초대형 이미지+글로우, 우수=중형, 일반=기본 (C) */
+  if(tier>=3)reveal.classList.add('gold'),rvE.classList.add('gold');
+  const imgSz=tier>=3?210:tier>=2?186:172;
+  rvE.innerHTML='';var _rim=new Image();_rim.className='rimg';
+  _rim.style.cssText=`width:${imgSz}px;height:${imgSz}px;object-fit:contain;background:#fff;border-radius:16px;padding:8px;box-shadow:0 10px 26px rgba(0,0,0,.45);display:block`;
   _rim.onerror=function(){rvE.textContent=rec.e;};
   _rim.src='prizes/'+encodeURIComponent(rec.n)+'.jpg';rvE.appendChild(_rim);
+  /* 우수/최고급 배너 (C) */
+  if(tier>=2){
+    rvB.className='rv-banner'+(tier>=3?'':' tier2');
+    rvB.firstElementChild.textContent=(tier>=3?'🏆 ':'✨ ')+(rec.g||'')+' 경품 당첨!';
+    T(()=>rvB.classList.add('show'),200);
+  }
   if(tier>=2)sndBoom(); else sndPop();
   vib(tier>=3?[25,40,90]:tier>=2?[20,50]:[15]);
   if(tier>=2){reveal.classList.add('shakeit');T(()=>reveal.classList.remove('shakeit'),330);}
   const col=tier>=3?['#FFD700','#fff','#ffe27a','#ffab40','#ff5a5a']:tier>=2?['#FFD700','#fff','#ffe27a']:['#ffe27a','#fff'];
-  burstAt(innerWidth/2,innerHeight*.42,col,tier>=3?28:tier>=2?20:12,60,tier>=3?200:tier>=2?150:110);
+  burstAt(innerWidth/2,innerHeight*.42,col,tier>=3?34:tier>=2?20:12,60,tier>=3?230:tier>=2?150:110);
   if(tier>=3)flashGold();
   T(()=>{rvN.textContent=rec.n;rvN.classList.add('stamp');sndTada();},360);
-  T(()=>{rvG.textContent=rec.g;rvG.classList.add('pop');if(tier>=2)confetti(tier>=3?90:55);},640);
-  if(tier>=3)T(()=>confetti(60),1120);
-  T(finishReveal,tier>=3?1950:1500);
+  T(()=>{rvG.textContent=rec.g;rvG.classList.add('pop');if(tier>=2)confetti(tier>=3?110:55);},640);
+  if(tier>=3){T(()=>{flashGold();burstAt(innerWidth/2,innerHeight*.42,col,26,80,240);},760);T(()=>confetti(80),1300);}
+  T(finishReveal,tier>=3?2050:1500);
 }
 
 function revealAbort(){rvTimers.forEach(clearTimeout);rvTimers=[];rvDone=null;reveal.style.opacity='0';setTimeout(()=>{reveal.style.display='none';},300);}
@@ -1188,6 +1259,7 @@ function reset(){
   card.classList.remove('up');dim.classList.remove('on');
   confEl.innerHTML='';
   goalText.classList.remove('show');
+  stage.classList.remove('zoom');vignetteEl.classList.remove('on');
   sky.classList.remove('hype');
   if(window.__netBall){window.__netBall.remove();window.__netBall=null;}
   keeperEl.style.transition='none';
