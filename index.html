@@ -409,8 +409,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,'Appl
   <div class="prize-box" id="prizeBox" style="display:none">
     <div class="pb-rays"></div>
     <span class="stamp">당첨!</span>
-    <div class="cemoji" id="cardEmoji">🎁</div>
     <div class="prize-name" id="prizeName"></div>
+    <div class="cemoji" id="cardEmoji">🎁</div>
+    <img id="prizeImg" alt="" style="display:none;width:172px;height:172px;object-fit:contain;margin:6px auto 2px;background:#fff;border-radius:14px;padding:6px;box-shadow:0 3px 12px rgba(0,0,0,.14)">
     <span class="prize-grade" id="prizeGrade"></span>
     <div class="prize-meta" id="prizeMeta"></div>
   </div>
@@ -1136,8 +1137,13 @@ function fillCard(rec,isRevisit,lock){
     ?'참여 완료! <span class="hl">당첨 확인</span> ✅'
     :'GOAL! <span class="hl">당첨을 축하합니다!</span> 🎉';
   document.getElementById('prizeBox').style.display='block';
-  document.getElementById('cardEmoji').textContent=rec.e;
   document.getElementById('prizeName').textContent=rec.n;
+  (function(){var emo=document.getElementById('cardEmoji'),pim=document.getElementById('prizeImg');
+    emo.textContent=rec.e;emo.style.display='block';pim.style.display='none';
+    var probe=new Image();
+    probe.onload=function(){pim.src=probe.src;pim.style.display='block';emo.style.display='none';};
+    probe.onerror=function(){pim.style.display='none';emo.style.display='block';};
+    probe.src='prizes/'+encodeURIComponent(rec.n)+'.jpg';})();
   const gr=document.getElementById('prizeGrade');
   gr.textContent=rec.g;
   if((rec.tier&&rec.tier>=3)||/특급|최고급/.test(rec.g||'')){gr.style.background='linear-gradient(180deg,#ffd700,#f59f00)';gr.style.color='#5b3d00';}
