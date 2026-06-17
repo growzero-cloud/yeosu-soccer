@@ -719,13 +719,27 @@ function show(el){[sStart,sGame].forEach(e=>e.style.display='none');el.style.dis
 document.getElementById('btn-start').addEventListener('click',()=>{initAudio();sndPop();show(sGame);});
 document.getElementById('btn-retry').addEventListener('click',()=>{sndPop();reset();});
 
-/* boot: 이미 참여한 폰 → 수령권 화면 */
+/* boot: 이미 참여한 폰 → 수령권 화면 (단, 새 라운드/테스트모드면 잠금 해제하고 다시 1회 허용) */
 const rec0=getRec();
 if(rec0&&!TEST){
-  LOCKED=true;show(sGame);
+  LOCKED=true;show(sGame);                 /* 일단 잠금(안전) — 서버 확인 후 새 라운드면 해제 */
   setTimeout(()=>{fillCard(rec0,true,true);dim.classList.add('on');card.classList.add('up');},250);
+  verifyRound(rec0);
 }else{
   show(sStart);
+}
+/* 서버 라운드 확인: 리셋/집계시작으로 라운드가 바뀌었거나(=다시 1회) 준비/테스트 모드면(=무제한) 잠금 해제 */
+async function verifyRound(rec){
+  try{
+    const c=await (await fetch(PRIZE_API+'?action=config',{cache:'no-store'})).json();
+    const stillLocked = c && c.mode!=='ready' && c.roundId!=null && rec && rec.round===c.roundId;
+    if(!stillLocked){
+      try{localStorage.removeItem(PKEY);}catch(e){}
+      LOCKED=false;
+      card.classList.remove('up');dim.classList.remove('on');
+      show(sStart);
+    }
+  }catch(e){/* 오프라인 등 확인 불가 → 잠금 유지(안전) */}
 }
 
 function setZone(z){if(z===curZ)return;if(z>=0)vib(8);azCells.forEach(c=>c.classList.remove('on'));if(z>=0&&z<=8)aimInner.querySelector(`[data-z="${z}"]`).classList.add('on');curZ=z;}
@@ -1174,7 +1188,7 @@ reveal.addEventListener('click',()=>{if(rvDone)finishReveal();});
 /* ───────── Result: 서버 추첨(공유 재고) 또는 로컬 예시풀 ───────── */
 async function result(zone){
   revealStart();
-  let rec=null, state='ok', lock=false;
+  let rec=null, state='ok', lock=false, roundId=null;
   if(TEST){
     const p=drawPrize(); rec={e:p.e,n:p.n,g:p.g,tier:p.tier||1,t:Date.now(),c:mkCode()};
     try{new Image().src='prizes/'+encodeURIComponent(rec.n)+'.jpg';}catch(e){}
@@ -1185,11 +1199,11 @@ async function result(zone){
     await sleep(2000); /* 링 서스펜스 2초(그 동안 추첨·사진 로딩 끝) */
     if(!d) state='err';
     else if(d.soldout) state='sold';
-    else { rec={e:d.emoji,n:d.name,g:d.grade,tier:Number(d.tier)||1,t:Date.now(),c:d.code}; lock=!!d.lock; }
+    else { rec={e:d.emoji,n:d.name,g:d.grade,tier:Number(d.tier)||1,t:Date.now(),c:d.code}; lock=!!d.lock; roundId=(d.round!=null?d.round:null); }
   }
   if(state==='err'){revealAbort();showSpecialCard('네트워크 오류 ⚠️','연결을 확인하고<br>다시 시도해 주세요.',true);return;}
   if(state==='sold'){revealAbort();showSpecialCard('오늘은 <span class="hl">마감</span>됐어요 🙏','준비된 경품이 모두 소진됐습니다.<br>다음 기회에 또 도전해 주세요!',TEST);return;}
-  if(lock){try{localStorage.setItem(PKEY,JSON.stringify(rec));}catch(e){}LOCKED=true;}
+  if(lock){try{localStorage.setItem(PKEY,JSON.stringify({...rec,round:roundId}));}catch(e){}LOCKED=true;}
   revealReveal(rec,()=>{
     fillCard(rec,false,lock);sndPop();
     dim.classList.add('on');card.classList.add('up');
