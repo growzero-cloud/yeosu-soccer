@@ -60,7 +60,7 @@
 
   <div class="sec">
     <h2>1단계 · 실전 리셋 / 초기화 <span style="font-size:.72rem;color:#46d17a">(누를 때마다)</span></h2>
-    <p>누를 때마다 → 재고 <b>1,859개 가득</b> · 당첨기록 <b>0</b> · <b>실전 모드</b>. (사전 시뮬 후 다시 눌러 초기화 가능)<br><b style="color:#ffb13d">아직 집계 전</b> — 손님 받기 직전 아래 <b>2단계</b>를 눌러야 집계가 켜집니다.</p>
+    <p>누를 때마다 → 재고 <b>1,849개 가득</b> · 당첨기록 <b>0</b> · <b>실전 모드</b>. (사전 시뮬 후 다시 눌러 초기화 가능)<br><b style="color:#ffb13d">아직 집계 전</b> — 손님 받기 직전 아래 <b>2단계</b>를 눌러야 집계가 켜집니다.</p>
     <button class="b-live" onclick="doReset()">🚀 실전 리셋 · 초기화</button>
   </div>
 
@@ -136,8 +136,8 @@ async function doSnapshot(){
   try{const d=await api('action=snapshot'); if(d.ok){toast('▶️ 집계 시작! 지금부터 엑셀에 기록됩니다');load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
 }
 async function doReset(){
-  if(!confirm('재고를 1,859개로 가득 채우고, 당첨기록을 0으로, 실전 모드로 초기화합니다.\n(집계는 아직 시작 안 됨 — 이후 [집계 시작]을 누르세요)\n진행할까요?'))return;
-  try{const d=await api('action=reset'); if(d.ok){toast('🚀 초기화 완료! 재고 1,859 가득·기록 0');load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
+  if(!confirm('재고를 1,849개로 가득 채우고, 당첨기록을 0으로, 실전 모드로 초기화합니다.\n(집계는 아직 시작 안 됨 — 이후 [집계 시작]을 누르세요)\n진행할까요?'))return;
+  try{const d=await api('action=reset'); if(d.ok){toast('🚀 초기화 완료! 재고 1,849 가득·기록 0');load();}else toast('실패: '+(d.err==='auth'?'비밀키 오류':d.err),1);}catch(e){toast('실패 — 인터넷 확인',1);}
 }
 function doExport(){
   if(!KEY){toast('비밀키가 필요합니다',1);return;}
