@@ -1074,7 +1074,11 @@ function revealReveal(rec,done){
   const rvE=$rv('rvEmoji'),rvN=$rv('rvName'),rvG=$rv('rvGrade'),rvR=$rv('rvRing');
   const tier=rec.tier||1;
   const T=(fn,ms)=>rvTimers.push(setTimeout(fn,ms));
-  rvE.textContent=rec.e;rvE.classList.add('slam');rvR.classList.add('go');
+  rvE.classList.add('slam');rvR.classList.add('go');
+  rvE.innerHTML='';var _rim=new Image();
+  _rim.style.cssText='width:172px;height:172px;object-fit:contain;background:#fff;border-radius:16px;padding:8px;box-shadow:0 10px 26px rgba(0,0,0,.45);display:block';
+  _rim.onerror=function(){rvE.textContent=rec.e;};
+  _rim.src='prizes/'+encodeURIComponent(rec.n)+'.jpg';rvE.appendChild(_rim);
   if(tier>=2)sndBoom(); else sndPop();
   vib(tier>=3?[25,40,90]:tier>=2?[20,50]:[15]);
   if(tier>=2){reveal.classList.add('shakeit');T(()=>reveal.classList.remove('shakeit'),330);}
@@ -1101,11 +1105,13 @@ async function result(zone){
   revealStart();
   let rec=null, state='ok', lock=false;
   if(TEST){
-    await sleep(760);
     const p=drawPrize(); rec={e:p.e,n:p.n,g:p.g,tier:p.tier||1,t:Date.now(),c:mkCode()};
+    try{new Image().src='prizes/'+encodeURIComponent(rec.n)+'.jpg';}catch(e){}
+    await sleep(760);
   }else{
-    const [d]=await Promise.all([drawP||drawServer(), sleep(2000)]); /* prefetch 추첨 + 링 서스펜스 2초: 공 날아가는 동안 추첨 끝나 보통 딱 2초에 공개(서버 대기 X) */
-    drawP=null;
+    const d=await (drawP||drawServer()); drawP=null;
+    if(d&&d.name){try{new Image().src='prizes/'+encodeURIComponent(d.name)+'.jpg';}catch(e){}} /* 공개 전 사진 미리 로드 */
+    await sleep(2000); /* 링 서스펜스 2초(그 동안 추첨·사진 로딩 끝) */
     if(!d) state='err';
     else if(d.soldout) state='sold';
     else { rec={e:d.emoji,n:d.name,g:d.grade,tier:Number(d.tier)||1,t:Date.now(),c:d.code}; lock=!!d.lock; }
